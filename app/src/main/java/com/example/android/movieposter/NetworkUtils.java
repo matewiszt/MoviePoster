@@ -1,6 +1,12 @@
 package com.example.android.movieposter;
 
+import android.content.res.Resources;
+import android.text.TextUtils;
 import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,15 +16,85 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NetworkUtils {
 
     //Tag constant for logging
     private static final String LOG_TAG = "NetworkUtils: ";
+    
+    private static final Resources res = Resources.getSystem();
 
     //Public constructor which will be never used
     public NetworkUtils(){}
 
+    /*
+     * Fetch the data from the /movie/popular endpoint
+     * @param urlString: the URL in String format that we want to query
+     * @return List<Movie>: a list of Movie objects
+     */
+    public static List<Movie> fetchPopularMoviesData(String urlString){
+
+        URL requestUrl = createUrl(urlString);
+
+        String jsonResponse = null;
+
+        try {
+            jsonResponse = makeHttpRequest(requestUrl);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, res.getString(R.string.http_request_error), e);
+        }
+
+        List<Movie> movies = parsePopularJson(jsonResponse);
+        return movies;
+    }
+
+    /*
+     * Create a movie list from the data returned from an HTTP request
+     * @param responseJson: the response from the HTTP request in String format
+     * @return List<Movie>: a list of Movie objects created from the result
+     */
+    private static List<Movie> parsePopularJson(String responseJson){
+
+        // If the response is empty, just return null
+        if (TextUtils.isEmpty(responseJson)){
+            return null;
+        }
+
+        // Create a new movie list for the results
+        List<Movie> movies = new ArrayList<>();
+
+        try {
+
+            //Try to parse the result as JSONObject and get the results array
+            JSONObject resultObject = new JSONObject(responseJson);
+            JSONArray resultsArray = resultObject.getJSONArray(res.getString(R.string.json_key_results));
+
+            for (int i = 0; i <= resultsArray.length(); i++){
+
+                //Loop through all the results and extract the data from them
+                JSONObject currentMovie = resultsArray.getJSONObject(i);
+                int id = currentMovie.getInt(res.getString(R.string.json_key_id));
+                String title = currentMovie.getString(res.getString(R.string.json_key_title));
+                String imagePath = currentMovie.getString(res.getString(R.string.json_key_image));
+                String synopsis = currentMovie.getString(res.getString(R.string.json_key_synopsis));
+                double rating = currentMovie.getDouble(res.getString(R.string.json_key_rating));
+                String releaseDate = currentMovie.getString(res.getString(R.string.json_key_date));
+
+                //Create a Movie instance of every result and add them to the movie list
+                Movie movieInstance = new Movie(id, title, imagePath, synopsis, rating, releaseDate);
+                movies.add(movieInstance);
+            }
+
+        } catch (JSONException e){
+
+            Log.e(LOG_TAG, res.getString(R.string.server_error_text), e);
+        }
+
+        return movies;
+
+    }
 
     /*
      * Get the response from an InputStream
@@ -83,11 +159,11 @@ public class NetworkUtils {
                 responseStream = connection.getInputStream();
                 responseString = readFromStream(responseStream);
             } else {
-                Log.e(LOG_TAG, "Server error");
+                Log.e(LOG_TAG, res.getString(R.string.server_error_text));
             }
 
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Connection creation failed", e);
+            Log.e(LOG_TAG, res.getString(R.string.connection_creation_error), e);
         } finally {
 
             //If we are not disconnected yet, disconnect
@@ -118,7 +194,7 @@ public class NetworkUtils {
             url = new URL(urlString);
 
         } catch (MalformedURLException e){
-            Log.e(LOG_TAG, "URL creation failed", e);
+            Log.e(LOG_TAG, res.getString(R.string.url_creation_error_text), e);
         }
         return url;
 

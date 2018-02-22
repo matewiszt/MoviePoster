@@ -1,3 +1,18 @@
 <resources>
+    <!-- Application name -->
     <string name="app_name">MoviePoster</string>
+    <!-- NetworkUtils error Strings -->
+    <string name="url_creation_error_text">URL creation failed</string>
+    <string name="server_error_text">Server error</string>
+    <string name="connection_creation_error">Connection creation failed</string>
+    <string name="json_parsing_error">JSON parsing failed</string>
+    <string name="http_request_error">HTTP request failed</string>
+    <!-- /movie/popular endpoint JSON keys -->
+    <string name="json_key_results">results</string>
+    <string name="json_key_title">original_title</string>
+    <string name="json_key_id">id</string>
+    <string name="json_key_image">poster_path</string>
+    <string name="json_key_synopsis">overview</string>
+    <string name="json_key_rating">vote_average</string>
+    <string name="json_key_date">release_date</string>
 </resources>
