@@ -1,6 +1,5 @@
 package com.example.android.movieposter;
 
-import android.content.res.Resources;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -23,8 +22,19 @@ public class NetworkUtils {
 
     //Tag constant for logging
     private static final String LOG_TAG = "NetworkUtils: ";
-    
-    private static final Resources res = Resources.getSystem();
+    private static final String JSON_KEY_RESULTS = "results";
+    private static final String JSON_KEY_ID = "id";
+    private static final String JSON_KEY_TITLE = "original_title";
+    private static final String JSON_KEY_IMAGE = "poster_path";
+    private static final String JSON_KEY_SYNOPSIS = "overview";
+    private static final String JSON_KEY_RATING = "vote_average";
+    private static final String JSON_KEY_DATE = "release_date";
+
+    private static final String URL_ERROR_TEXT = "URL creation failed";
+    private static final String SERVER_ERROR_TEXT = "Server error";
+    private static final String CONN_ERROR_TEXT = "Connection creation failed";
+    private static final String JSON_ERROR_TEXT = "JSON parsing failed";
+    private static final String HTTP_ERROR_TEXT = "HTTP request failed";
 
     //Public constructor which will be never used
     public NetworkUtils(){}
@@ -43,7 +53,7 @@ public class NetworkUtils {
         try {
             jsonResponse = makeHttpRequest(requestUrl);
         } catch (IOException e) {
-            Log.e(LOG_TAG, res.getString(R.string.http_request_error), e);
+            Log.e(LOG_TAG, HTTP_ERROR_TEXT, e);
         }
 
         List<Movie> movies = parsePopularJson(jsonResponse);
@@ -69,18 +79,18 @@ public class NetworkUtils {
 
             //Try to parse the result as JSONObject and get the results array
             JSONObject resultObject = new JSONObject(responseJson);
-            JSONArray resultsArray = resultObject.getJSONArray(res.getString(R.string.json_key_results));
+            JSONArray resultsArray = resultObject.getJSONArray(JSON_KEY_RESULTS);
 
-            for (int i = 0; i <= resultsArray.length(); i++){
+            for (int i = 0; i < resultsArray.length(); i++){
 
                 //Loop through all the results and extract the data from them
                 JSONObject currentMovie = resultsArray.getJSONObject(i);
-                int id = currentMovie.getInt(res.getString(R.string.json_key_id));
-                String title = currentMovie.getString(res.getString(R.string.json_key_title));
-                String imagePath = currentMovie.getString(res.getString(R.string.json_key_image));
-                String synopsis = currentMovie.getString(res.getString(R.string.json_key_synopsis));
-                double rating = currentMovie.getDouble(res.getString(R.string.json_key_rating));
-                String releaseDate = currentMovie.getString(res.getString(R.string.json_key_date));
+                int id = currentMovie.getInt(JSON_KEY_ID);
+                String title = currentMovie.getString(JSON_KEY_TITLE);
+                String imagePath = currentMovie.getString(JSON_KEY_IMAGE);
+                String synopsis = currentMovie.getString(JSON_KEY_SYNOPSIS);
+                double rating = currentMovie.getDouble(JSON_KEY_RATING);
+                String releaseDate = currentMovie.getString(JSON_KEY_DATE);
 
                 //Create a Movie instance of every result and add them to the movie list
                 Movie movieInstance = new Movie(id, title, imagePath, synopsis, rating, releaseDate);
@@ -89,7 +99,7 @@ public class NetworkUtils {
 
         } catch (JSONException e){
 
-            Log.e(LOG_TAG, res.getString(R.string.server_error_text), e);
+            Log.e(LOG_TAG, JSON_ERROR_TEXT, e);
         }
 
         return movies;
@@ -159,11 +169,11 @@ public class NetworkUtils {
                 responseStream = connection.getInputStream();
                 responseString = readFromStream(responseStream);
             } else {
-                Log.e(LOG_TAG, res.getString(R.string.server_error_text));
+                Log.e(LOG_TAG, SERVER_ERROR_TEXT);
             }
 
         } catch (IOException e) {
-            Log.e(LOG_TAG, res.getString(R.string.connection_creation_error), e);
+            Log.e(LOG_TAG, CONN_ERROR_TEXT, e);
         } finally {
 
             //If we are not disconnected yet, disconnect
@@ -194,7 +204,7 @@ public class NetworkUtils {
             url = new URL(urlString);
 
         } catch (MalformedURLException e){
-            Log.e(LOG_TAG, res.getString(R.string.url_creation_error_text), e);
+            Log.e(LOG_TAG, URL_ERROR_TEXT, e);
         }
         return url;
 
