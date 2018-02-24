@@ -6,6 +6,7 @@ package com.example.android.movieposter;
 
 public class Movie {
 
+    // Properties of the class
     private int mId;
     private String mOriginalTitle;
     private String mThumbnailImagePath;
@@ -13,7 +14,9 @@ public class Movie {
     private double mUserRating;
     private String mReleaseDate;
 
-    //Public constructor for an instance of the Movie class
+    private static final String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w185";
+
+    // Public constructor for an instance of the Movie class
     public Movie(int id, String title, String imagePath, String synopsis, double rating, String releaseDate) {
         mId = id;
         mOriginalTitle = title;
@@ -23,7 +26,7 @@ public class Movie {
         mReleaseDate = releaseDate;
     }
 
-    //Getter and setter methods for every property
+    // Getter and setter methods for every property except for getImageFullPath (it is dependant on mThumbnailImagePath)
 
     public int getId(){
         return mId;
@@ -43,6 +46,14 @@ public class Movie {
 
     public String getImagePath(){
         return mThumbnailImagePath;
+    }
+
+    /*
+     * Append the returned image path fragment to the base URL
+     * @return String: a full path of an image
+     */
+    public String getImageFullPath(){
+        return IMAGE_BASE_URL.concat(mThumbnailImagePath);
     }
 
     public void setImagePath(String newImagePath){

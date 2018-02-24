@@ -5,52 +5,79 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
 
+    // List of movies
     private ArrayList<Movie> mMovies;
+    private Context mContext;
 
-    public MovieAdapter() {
-
+    // Public constructor
+    public MovieAdapter(Context context) {
+        mContext = context;
     }
 
+    // The ViewHolder class of the MovieAdapter
     public class MovieAdapterViewHolder extends RecyclerView.ViewHolder {
 
+        // The title and the post of the Movie
         public final TextView mTitle;
+        public final ImageView mPoster;
 
-        public MovieAdapterViewHolder(View v) {
-            super(v);
-            mTitle = (TextView) v.findViewById(R.id.title);
+        // Constructor for the ViewHolder class
+        public MovieAdapterViewHolder(View view) {
+            super(view);
+            mTitle = (TextView) view.findViewById(R.id.title);
+            mPoster = (ImageView) view.findViewById(R.id.poster);
         }
 
     }
 
     @Override
-    public void onBindViewHolder(MovieAdapterViewHolder holder, int position) {
-        String actualTitle = mMovies.get(position).getTitle();
-        holder.mTitle.setText(actualTitle);
-    }
-
-    @Override
     public MovieAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+        // Create a layout from the list_item.xml and initalize the ViewHolder with it
         Context context = parent.getContext();
         View view = LayoutInflater.from(context).inflate(R.layout.list_item, parent, false);
         return new MovieAdapterViewHolder(view);
     }
 
     @Override
+    public void onBindViewHolder(MovieAdapterViewHolder holder, int position) {
+
+        // Get the current Movie and its needed properties
+        Movie actualMovie = mMovies.get(position);
+        String actualTitle = actualMovie.getTitle();
+        String imagePath = actualMovie.getImageFullPath();
+
+        // Load the image of the Movie, and set the title (also as content description of the image)
+        Picasso.with(mContext).load(imagePath).into(holder.mPoster);
+        holder.mTitle.setText(actualTitle);
+        holder.mPoster.setContentDescription(actualTitle);
+    }
+
+    @Override
     public int getItemCount() {
+
+        // If we don't have movies, return 0
         if (mMovies == null) {
             return 0;
         }
+
+        // Otherwise, return the size of the Movie list
         return mMovies.size();
     }
 
-    public void setMovieTitles(List<Movie> movies){
+    public void setMovieData(List<Movie> movies){
+
+        // Refresh the movie list and notify the loader
         mMovies = (ArrayList<Movie>) movies;
         notifyDataSetChanged();
     }
