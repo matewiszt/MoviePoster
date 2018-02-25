@@ -34,14 +34,15 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     public class MovieAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         // The title and the post of the Movie
-        public final TextView mTitle;
-        public final ImageView mPoster;
+        public final TextView mTitleTextView;
+        public final ImageView mPosterImageView;
 
         // Constructor for the ViewHolder class
         public MovieAdapterViewHolder(View view) {
             super(view);
-            mTitle = (TextView) view.findViewById(R.id.title);
-            mPoster = (ImageView) view.findViewById(R.id.poster);
+            mTitleTextView = (TextView) view.findViewById(R.id.title);
+            mPosterImageView = (ImageView) view.findViewById(R.id.poster);
+            view.setOnClickListener(this);
         }
 
         @Override
@@ -66,12 +67,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         // Get the current Movie and its needed properties
         Movie actualMovie = mMovies.get(position);
         String actualTitle = actualMovie.getTitle();
-        String imagePath = actualMovie.getImageFullPath();
+        String imagePath = actualMovie.getImageHomeFullPath();
 
         // Load the image of the Movie, and set the title (also as content description of the image)
-        Picasso.with(mContext).load(imagePath).into(holder.mPoster);
-        holder.mTitle.setText(actualTitle);
-        holder.mPoster.setContentDescription(actualTitle);
+        Picasso.with(mContext).load(imagePath).into(holder.mPosterImageView);
+        holder.mTitleTextView.setText(actualTitle);
+        holder.mPosterImageView.setContentDescription(actualTitle);
     }
 
     @Override
