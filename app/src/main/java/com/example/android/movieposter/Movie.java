@@ -14,7 +14,8 @@ public class Movie {
     private double mUserRating;
     private String mReleaseDate;
 
-    private static final String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w185";
+    private static final String IMAGE_HOME_BASE_URL = "http://image.tmdb.org/t/p/w185";
+    private static final String IMAGE_DETAIL_BASE_URL = "http://image.tmdb.org/t/p/w342";
 
     // Public constructor for an instance of the Movie class
     public Movie(int id, String title, String imagePath, String synopsis, double rating, String releaseDate) {
@@ -52,8 +53,12 @@ public class Movie {
      * Append the returned image path fragment to the base URL
      * @return String: a full path of an image
      */
-    public String getImageFullPath(){
-        return IMAGE_BASE_URL.concat(mThumbnailImagePath);
+    public String getImageHomeFullPath(){
+        return IMAGE_HOME_BASE_URL.concat(mThumbnailImagePath);
+    }
+
+    public String getImageDetailFullPath(){
+        return IMAGE_DETAIL_BASE_URL.concat(mThumbnailImagePath);
     }
 
     public void setImagePath(String newImagePath){
