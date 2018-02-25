@@ -15,17 +15,23 @@ import java.util.List;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
 
-    // List of movies
     private ArrayList<Movie> mMovies;
     private Context mContext;
+    private final MovieAdapterClickHandler mClickHandler;
+
+    // Interface implementation for item click
+    public interface MovieAdapterClickHandler {
+        void onClickHandler(Movie movie);
+    }
 
     // Public constructor
-    public MovieAdapter(Context context) {
+    public MovieAdapter(Context context, MovieAdapterClickHandler handler) {
         mContext = context;
+        mClickHandler = handler;
     }
 
     // The ViewHolder class of the MovieAdapter
-    public class MovieAdapterViewHolder extends RecyclerView.ViewHolder {
+    public class MovieAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         // The title and the post of the Movie
         public final TextView mTitle;
@@ -38,6 +44,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
             mPoster = (ImageView) view.findViewById(R.id.poster);
         }
 
+        @Override
+        public void onClick(View view) {
+            Movie movie = mMovies.get(getAdapterPosition());
+            mClickHandler.onClickHandler(movie);
+        }
     }
 
     @Override
