@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import java.util.List;
@@ -31,6 +30,13 @@ public class MainActivity extends AppCompatActivity
     private static final String LANGCODE = "en-US";
     private static final String API_QUERY_PARAM_PAGE = "page";
 
+    public static final String DETAIL_KEY_ID = "id";
+    public static final String DETAIL_KEY_TITLE = "title";
+    public static final String DETAIL_KEY_IMAGE = "image";
+    public static final String DETAIL_KEY_SYNOPSIS = "synopsis";
+    public static final String DETAIL_KEY_RATING = "rating";
+    public static final String DETAIL_KEY_DATE = "date";
+
     public RecyclerView mRecyclerView;
     public MovieAdapter mAdapter;
     public int gridColumnCount = 2;
@@ -42,7 +48,7 @@ public class MainActivity extends AppCompatActivity
 
         // Create a new GridLayoutManager and set it to the RecyclerView
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        LinearLayoutManager layoutManager = new GridLayoutManager(this, gridColumnCount);
+        GridLayoutManager layoutManager = new GridLayoutManager(this, gridColumnCount);
         mRecyclerView.setLayoutManager(layoutManager);
 
         // Initialize a new MovieAdapter and set it to the RecyclerView
@@ -91,14 +97,18 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onClickHandler(Movie movie) {
-        Intent intent = new Intent(this, DetailActivity.class);
-        intent.putExtra("id", movie.getId());
-        intent.putExtra("title", movie.getTitle());
-        intent.putExtra("image", movie.getImageFullPath());
-        intent.putExtra("synopsis", movie.getSynopsis());
-        intent.putExtra("rating", movie.getRating());
-        intent.putExtra("date", movie.getReleaseDate());
-        startActivity(intent);
+
+        // Create an Intent to launch the DetailActivity and pass the current Movie data
+        Intent detailLaunchIntent = new Intent(this, DetailActivity.class);
+        detailLaunchIntent.putExtra(DETAIL_KEY_ID, movie.getId());
+        detailLaunchIntent.putExtra(DETAIL_KEY_TITLE, movie.getTitle());
+        detailLaunchIntent.putExtra(DETAIL_KEY_IMAGE, movie.getImageDetailFullPath());
+        detailLaunchIntent.putExtra(DETAIL_KEY_SYNOPSIS, movie.getSynopsis());
+        detailLaunchIntent.putExtra(DETAIL_KEY_RATING, movie.getRating());
+        detailLaunchIntent.putExtra(DETAIL_KEY_DATE, movie.getReleaseDate());
+
+        // Start the DetailActivity
+        startActivity(detailLaunchIntent);
     }
 
     /*
