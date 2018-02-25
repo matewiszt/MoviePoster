@@ -6,11 +6,13 @@ import android.content.Intent;
 import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -19,16 +21,6 @@ public class MainActivity extends AppCompatActivity
 
     // Log tag
     private String LOG_TAG = getClass().getName();
-
-    //Define constants for API calls
-    private static final String BASE_URL = "http://api.themoviedb.org/3";
-    private static final String API_ENDPOINT_POPULAR = "popular";
-    private static final String API_ENDPOINT_MOVIE = "movie";
-    private static final String API_QUERY_PARAM_KEY = "api_key";
-    private static final String API_KEY = BuildConfig.MOVIEDB_API_KEY;
-    private static final String API_QUERY_PARAM_LANG = "language";
-    private static final String LANGCODE = "en-US";
-    private static final String API_QUERY_PARAM_PAGE = "page";
 
     public static final String DETAIL_KEY_ID = "id";
     public static final String DETAIL_KEY_TITLE = "title";
@@ -39,6 +31,9 @@ public class MainActivity extends AppCompatActivity
 
     public RecyclerView mRecyclerView;
     public MovieAdapter mAdapter;
+    public TextView mEmptyView;
+    public ProgressBar mProgressBar;
+
     public int gridColumnCount = 2;
 
     @Override
@@ -46,8 +41,11 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Create a new GridLayoutManager and set it to the RecyclerView
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        mEmptyView = (TextView) findViewById(R.id.empty_tv);
+        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
+
+        // Create a new GridLayoutManager and set it to the RecyclerView
         GridLayoutManager layoutManager = new GridLayoutManager(this, gridColumnCount);
         mRecyclerView.setLayoutManager(layoutManager);
 
@@ -66,6 +64,11 @@ public class MainActivity extends AppCompatActivity
 
             getLoaderManager().initLoader(0, null, this);
 
+        } else {
+
+            // If the device is NOT connected to the internet, show the empty text
+            showEmptyText();
+
         }
 
     }
@@ -73,8 +76,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     public Loader<List<Movie>> onCreateLoader(int i, Bundle bundle) {
 
+        showProgressBar();
         // Return a new Loader with the composed URL
-        return new MovieLoader(this, composeUrl());
+        return new MovieLoader(this, QueryHelpers.composePopularEndpointUrl());
     }
 
     @Override
@@ -85,6 +89,9 @@ public class MainActivity extends AppCompatActivity
 
         if (movies != null){
             mAdapter.setMovieData(movies);
+            showRecyclerView();
+        } else {
+            showEmptyText();
         }
     }
 
@@ -102,7 +109,7 @@ public class MainActivity extends AppCompatActivity
         Intent detailLaunchIntent = new Intent(this, DetailActivity.class);
         detailLaunchIntent.putExtra(DETAIL_KEY_ID, movie.getId());
         detailLaunchIntent.putExtra(DETAIL_KEY_TITLE, movie.getTitle());
-        detailLaunchIntent.putExtra(DETAIL_KEY_IMAGE, movie.getImageDetailFullPath());
+        detailLaunchIntent.putExtra(DETAIL_KEY_IMAGE, movie.getImageFullPath());
         detailLaunchIntent.putExtra(DETAIL_KEY_SYNOPSIS, movie.getSynopsis());
         detailLaunchIntent.putExtra(DETAIL_KEY_RATING, movie.getRating());
         detailLaunchIntent.putExtra(DETAIL_KEY_DATE, movie.getReleaseDate());
@@ -112,19 +119,29 @@ public class MainActivity extends AppCompatActivity
     }
 
     /*
-         * Compose the URL for the popular movies
-         * @return String: the URL for the popular movies
-         */
-    private String composeUrl() {
+     * Hide the RecyclerView and the ProgressBar show the empty text
+     */
+    private void showEmptyText() {
+        mRecyclerView.setVisibility(View.INVISIBLE);
+        mProgressBar.setVisibility(View.INVISIBLE);
+        mEmptyView.setVisibility(View.VISIBLE);
+    }
 
-        Uri.Builder builder = new Uri.Builder();
+    /*
+     * Hide the ProgressBar and the empty view and show the results
+     */
+    private void showRecyclerView() {
+        mEmptyView.setVisibility(View.INVISIBLE);
+        mProgressBar.setVisibility(View.INVISIBLE);
+        mRecyclerView.setVisibility(View.VISIBLE);
+    }
 
-        Uri uri = builder.encodedPath(BASE_URL).appendPath(API_ENDPOINT_MOVIE).appendPath(API_ENDPOINT_POPULAR)
-                .appendQueryParameter(API_QUERY_PARAM_KEY, API_KEY)
-                .appendQueryParameter(API_QUERY_PARAM_LANG, LANGCODE)
-                .appendQueryParameter(API_QUERY_PARAM_PAGE, "1" ).build();
-
-        return uri.toString();
-
+    /*
+     * Hide the results container and the empty view and show the ProgressBar
+     */
+    private void showProgressBar() {
+        mEmptyView.setVisibility(View.INVISIBLE);
+        mRecyclerView.setVisibility(View.INVISIBLE);
+        mProgressBar.setVisibility(View.VISIBLE);
     }
 }

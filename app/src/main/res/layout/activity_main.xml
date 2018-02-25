@@ -13,4 +13,22 @@
 
     </android.support.v7.widget.RecyclerView>
 
+    <TextView
+        android:id="@+id/empty_tv"
+        android:text="@string/empty_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/list_item_default_spacing"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:visibility="visible"/>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="@dimen/progress_bar_dimen"
+        android:layout_height="@dimen/progress_bar_dimen"
+        android:layout_gravity="center"
+        android:visibility="invisible"/>
+
 </FrameLayout>
