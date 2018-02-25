@@ -1,49 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.android.movieposter.DetailActivity">
 
-    <ScrollView
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/detail_default_spacing"
+        android:paddingBottom="@dimen/detail_default_spacing">
 
         <LinearLayout
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/detail_default_spacing"
+            android:paddingStart="@dimen/detail_default_spacing"
+            android:paddingRight="@dimen/detail_default_spacing"
+            android:paddingEnd="@dimen/detail_default_spacing">
 
             <ImageView
                 android:id="@+id/detail_image_iv"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="3"
                 android:layout_height="wrap_content" />
 
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/detail_default_spacing"
+                android:paddingStart="@dimen/detail_default_spacing"
+                android:paddingRight="@dimen/detail_default_spacing"
+                android:paddingEnd="@dimen/detail_default_spacing">
+
+                <TextView
+                    android:id="@+id/detail_title_label_tv"
+                    style="@style/DetailLabel"
+                    android:text="@string/detail_title_label"/>
+
+                <TextView
+                    android:id="@+id/detail_title_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Movie title"/>
+
+                <TextView
+                    android:id="@+id/detail_rating_label_tv"
+                    style="@style/DetailLabel"
+                    android:text="@string/detail_rating_label"/>
+
+                <TextView
+                    android:id="@+id/detail_rating_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/detail_default_rating"/>
+
+                <TextView
+                    android:id="@+id/detail_date_label_tv"
+                    style="@style/DetailLabel"
+                    android:text="@string/detail_date_label"/>
+
+                <TextView
+                    android:id="@+id/detail_date_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/detail_default_date"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/detail_default_spacing"
+            android:paddingStart="@dimen/detail_default_spacing"
+            android:paddingRight="@dimen/detail_default_spacing"
+            android:paddingEnd="@dimen/detail_default_spacing">
+
             <TextView
-                android:id="@+id/detail_title_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:id="@+id/detail_synopsis_label_tv"
+                style="@style/DetailLabel"
+                android:text="@string/detail_synopsis_label"/>
 
             <TextView
                 android:id="@+id/detail_synopsis_tv"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/detail_rating_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/detail_date_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="@string/detail_default_synopsis"/>
 
         </LinearLayout>
 
-    </ScrollView>
+    </LinearLayout>
 
-</FrameLayout>
+</ScrollView>

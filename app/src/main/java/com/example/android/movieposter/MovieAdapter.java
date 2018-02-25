@@ -67,7 +67,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         // Get the current Movie and its needed properties
         Movie actualMovie = mMovies.get(position);
         String actualTitle = actualMovie.getTitle();
-        String imagePath = actualMovie.getImageHomeFullPath();
+        String imagePath = actualMovie.getImageFullPath();
 
         // Load the image of the Movie, and set the title (also as content description of the image)
         Picasso.with(mContext).load(imagePath).into(holder.mPosterImageView);

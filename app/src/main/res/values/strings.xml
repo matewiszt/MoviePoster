@@ -1,5 +1,15 @@
 <resources>
     <!-- Application name -->
     <string name="app_name">MoviePoster</string>
-
+    <!-- Detail default texts -->
+    <string name="detail_default_synopsis">No synopsis available</string>
+    <string name="detail_default_rating">No rating</string>
+    <string name="detail_default_date">Unknown release date</string>
+    <!-- Detail labels -->
+    <string name="detail_title_label">Title</string>
+    <string name="detail_rating_label">Rating</string>
+    <string name="detail_date_label">Release date</string>
+    <string name="detail_synopsis_label">Synopsis</string>
+    <!-- MainActivity -->
+    <string name="empty_text">An error occurred. Please check your internet connection.</string>
 </resources>
