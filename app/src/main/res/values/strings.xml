@@ -1,6 +1,11 @@
 <resources>
     <!-- Application name -->
     <string name="app_name">MoviePoster</string>
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="sort_order_label">Sort order</string>
+    <string name="sort_order_key">sort_order</string>
+    <string name="sort_order_default_value">popular</string>
     <!-- Detail default texts -->
     <string name="detail_default_synopsis">No synopsis available</string>
     <string name="detail_default_rating">No rating</string>
@@ -12,4 +17,5 @@
     <string name="detail_synopsis_label">Synopsis</string>
     <!-- MainActivity -->
     <string name="empty_text">An error occurred. Please check your internet connection.</string>
+    <string name="cd_bg">Movie</string>
 </resources>
