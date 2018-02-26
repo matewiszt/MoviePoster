@@ -2,12 +2,14 @@ package com.example.android.movieposter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ import java.util.List;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
 
+    private static final String LOG_TAG = "MovieAdapter";
     private ArrayList<Movie> mMovies;
     private Context mContext;
     private final MovieAdapterClickHandler mClickHandler;
@@ -62,17 +65,26 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     }
 
     @Override
-    public void onBindViewHolder(MovieAdapterViewHolder holder, int position) {
+    public void onBindViewHolder(final MovieAdapterViewHolder holder, int position) {
 
         // Get the current Movie and its needed properties
         Movie actualMovie = mMovies.get(position);
-        String actualTitle = actualMovie.getTitle();
+        final String actualTitle = actualMovie.getTitle();
         String imagePath = actualMovie.getImageFullPath();
 
         // Load the image of the Movie, and set the title (also as content description of the image)
-        Picasso.with(mContext).load(imagePath).into(holder.mPosterImageView);
-        holder.mTitleTextView.setText(actualTitle);
-        holder.mPosterImageView.setContentDescription(actualTitle);
+        Picasso.with(mContext).load(imagePath).into(holder.mPosterImageView, new Callback() {
+            @Override
+            public void onSuccess() {
+                holder.mTitleTextView.setText(actualTitle);
+                holder.mPosterImageView.setContentDescription(actualTitle);
+            }
+
+            @Override
+            public void onError() {
+                Log.e(LOG_TAG, "Picasso loading error");
+            }
+        });
     }
 
     @Override

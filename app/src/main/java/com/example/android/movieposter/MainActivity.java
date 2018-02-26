@@ -14,6 +14,9 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.android.movieposter.network.MovieLoader;
+import com.example.android.movieposter.network.QueryHelpers;
+
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
