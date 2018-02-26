@@ -9,35 +9,33 @@ import com.squareup.picasso.Picasso;
 
 public class DetailActivity extends AppCompatActivity {
 
-    private int mId;
-    private TextView mTitleTextView;
-    private ImageView mPosterImageView;
-    private TextView mSynopsisTextView;
-    private TextView mRatingTextView;
-    private TextView mReleaseDateTextView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        mTitleTextView = findViewById(R.id.detail_title_tv);
-        mPosterImageView = findViewById(R.id.detail_image_iv);
-        mSynopsisTextView = findViewById(R.id.detail_synopsis_tv);
-        mRatingTextView = findViewById(R.id.detail_rating_tv);
-        mReleaseDateTextView = findViewById(R.id.detail_date_tv);
+        // Find all the views of activity_detail.xml
+        TextView mTitleTextView = (TextView) findViewById(R.id.detail_title_tv);
+        ImageView mPosterImageView = (ImageView) findViewById(R.id.detail_image_iv);
+        TextView mSynopsisTextView = (TextView) findViewById(R.id.detail_synopsis_tv);
+        TextView mRatingTextView = (TextView) findViewById(R.id.detail_rating_tv);
+        TextView mReleaseDateTextView = (TextView) findViewById(R.id.detail_date_tv);
 
+        // Initialize the local variables for the Intent extras
+        int id = 0;
         String title = null;
         String image = null;
         String synopsis = null;
         double rating = 0;
         String date = null;
 
+        // If we have extras, check if the extras have the following keys and store them in the variables
         Bundle extras = getIntent().getExtras();
         if (extras != null){
 
+            // The id is for later use
             if (extras.containsKey(MainActivity.DETAIL_KEY_ID)) {
-                mId = extras.getInt(MainActivity.DETAIL_KEY_ID);
+                id = extras.getInt(MainActivity.DETAIL_KEY_ID);
             }
             if (extras.containsKey(MainActivity.DETAIL_KEY_TITLE)) {
                 title = extras.getString(MainActivity.DETAIL_KEY_TITLE);
@@ -56,8 +54,10 @@ public class DetailActivity extends AppCompatActivity {
             }
         }
 
+        // Set the Movie title as the title of the Activity
         setTitle(title);
 
+        // Pass the data to the proper Views
         mTitleTextView.setText(title);
         Picasso.with(this).load(image).into(mPosterImageView);
         mPosterImageView.setContentDescription(title);
