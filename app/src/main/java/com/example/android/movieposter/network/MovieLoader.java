@@ -1,7 +1,9 @@
-package com.example.android.movieposter;
+package com.example.android.movieposter.network;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;
+
+import com.example.android.movieposter.Movie;
 
 import java.util.List;
 

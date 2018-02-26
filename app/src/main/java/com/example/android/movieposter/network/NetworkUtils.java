@@ -1,7 +1,9 @@
-package com.example.android.movieposter;
+package com.example.android.movieposter.network;
 
 import android.text.TextUtils;
 import android.util.Log;
+
+import com.example.android.movieposter.Movie;
 
 import org.json.JSONArray;
 import org.json.JSONException;

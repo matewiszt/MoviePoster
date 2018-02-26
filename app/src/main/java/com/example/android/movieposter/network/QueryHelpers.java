@@ -1,6 +1,8 @@
-package com.example.android.movieposter;
+package com.example.android.movieposter.network;
 
 import android.net.Uri;
+
+import com.example.android.movieposter.BuildConfig;
 
 public class QueryHelpers {
 
