@@ -28,7 +28,7 @@ public class NetworkUtils {
     //JSON key constants for parsing the JSON
     private static final String JSON_KEY_RESULTS = "results";
     private static final String JSON_KEY_ID = "id";
-    private static final String JSON_KEY_TITLE = "original_title";
+    private static final String JSON_KEY_TITLE = "title";
     private static final String JSON_KEY_IMAGE = "poster_path";
     private static final String JSON_KEY_SYNOPSIS = "overview";
     private static final String JSON_KEY_RATING = "vote_average";
