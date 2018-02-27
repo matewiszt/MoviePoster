@@ -15,6 +15,22 @@
         android:alpha="0.2"
         android:adjustViewBounds="true" />
 
+    <LinearLayout
+        android:id="@+id/recycler_container"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/recycler_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        tools:text="Mock text"
+        android:padding="@dimen/detail_default_spacing"/>
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
@@ -22,6 +38,8 @@
         android:id="@+id/recyclerView">
 
     </android.support.v7.widget.RecyclerView>
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/empty_tv"

@@ -15,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity
     // Log tag
     private String LOG_TAG = getClass().getName();
 
+    // Intent extra keys - public because we use the same ones in the DetailActivity to return them
     public static final String DETAIL_KEY_ID = "id";
     public static final String DETAIL_KEY_TITLE = "title";
     public static final String DETAIL_KEY_IMAGE = "image";
@@ -38,25 +40,28 @@ public class MainActivity extends AppCompatActivity
     public static final String DETAIL_KEY_RATING = "rating";
     public static final String DETAIL_KEY_DATE = "date";
 
-    public RecyclerView mRecyclerView;
-    public MovieAdapter mAdapter;
-    public TextView mEmptyView;
-    public ProgressBar mProgressBar;
+    private boolean mSettingsUpdated = false;
 
-    public int gridColumnCount = 2;
-    public boolean mSettingsUpdated = false;
+    private LinearLayout mRecyclerContainer;
+    private TextView mRecyclerTitle;
+    private RecyclerView mRecyclerView;
+    private MovieAdapter mAdapter;
+    private TextView mEmptyView;
+    private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mRecyclerContainer = (LinearLayout) findViewById(R.id.recycler_container);
+        mRecyclerTitle = (TextView) findViewById(R.id.recycler_title);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         mEmptyView = (TextView) findViewById(R.id.empty_tv);
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
         // Create a new GridLayoutManager and set it to the RecyclerView
-        GridLayoutManager layoutManager = new GridLayoutManager(this, gridColumnCount);
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
         mRecyclerView.setLayoutManager(layoutManager);
 
         // Initialize a new MovieAdapter and set it to the RecyclerView
@@ -89,7 +94,8 @@ public class MainActivity extends AppCompatActivity
     public Loader<List<Movie>> onCreateLoader(int i, Bundle bundle) {
 
         showProgressBar();
-        // Return a new Loader with the composed URL
+
+        // Return a new Loader with the URL composed from the endpoint returned from the Settings
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String endpoint = preferences.getString(getString(R.string.sort_order_key), getString(R.string.sort_order_popular_value));
         return new MovieLoader(this, QueryHelpers.composeEndpointUrl(endpoint));
@@ -103,7 +109,22 @@ public class MainActivity extends AppCompatActivity
 
         if (movies != null){
             mAdapter.setMovieData(movies);
-            showRecyclerView();
+
+            //Set the title based on the Settings
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            String endpoint = preferences.getString(getString(R.string.sort_order_key), getString(R.string.sort_order_popular_value));
+            String title = "";
+            switch (endpoint){
+                case "top_rated":
+                    title = getString(R.string.title_top_rated);
+                    break;
+                case "popular":
+                    title = getString(R.string.title_popular);
+            }
+            mRecyclerTitle.setText(title);
+
+            // Make the movie list visible
+            showRecyclerContainer();
         } else {
             showEmptyText();
         }
@@ -182,7 +203,7 @@ public class MainActivity extends AppCompatActivity
      * Hide the RecyclerView and the ProgressBar show the empty text
      */
     private void showEmptyText() {
-        mRecyclerView.setVisibility(View.INVISIBLE);
+        mRecyclerContainer.setVisibility(View.INVISIBLE);
         mProgressBar.setVisibility(View.INVISIBLE);
         mEmptyView.setVisibility(View.VISIBLE);
     }
@@ -190,10 +211,10 @@ public class MainActivity extends AppCompatActivity
     /*
      * Hide the ProgressBar and the empty view and show the results
      */
-    private void showRecyclerView() {
+    private void showRecyclerContainer() {
         mEmptyView.setVisibility(View.INVISIBLE);
         mProgressBar.setVisibility(View.INVISIBLE);
-        mRecyclerView.setVisibility(View.VISIBLE);
+        mRecyclerContainer.setVisibility(View.VISIBLE);
     }
 
     /*
@@ -201,7 +222,7 @@ public class MainActivity extends AppCompatActivity
      */
     private void showProgressBar() {
         mEmptyView.setVisibility(View.INVISIBLE);
-        mRecyclerView.setVisibility(View.INVISIBLE);
+        mRecyclerContainer.setVisibility(View.INVISIBLE);
         mProgressBar.setVisibility(View.VISIBLE);
     }
 }
