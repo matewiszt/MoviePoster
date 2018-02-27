@@ -24,11 +24,11 @@ public class QueryHelpers {
          * Compose the URL for the popular movies
          * @return String: the URL for the popular movies
          */
-    public static String composePopularEndpointUrl() {
+    public static String composeEndpointUrl(String endpoint) {
 
         Uri.Builder builder = new Uri.Builder();
 
-        Uri uri = builder.encodedPath(BASE_URL).appendPath(API_ENDPOINT_MOVIE).appendPath(API_ENDPOINT_POPULAR)
+        Uri uri = builder.encodedPath(BASE_URL).appendPath(API_ENDPOINT_MOVIE).appendEncodedPath(endpoint)
                 .appendQueryParameter(API_QUERY_PARAM_KEY, API_KEY)
                 .appendQueryParameter(API_QUERY_PARAM_LANG, LANGCODE)
                 .appendQueryParameter(API_QUERY_PARAM_PAGE, "1" ).build();
