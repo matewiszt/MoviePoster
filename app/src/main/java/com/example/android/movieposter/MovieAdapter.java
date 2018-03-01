@@ -15,9 +15,13 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
 
     private static final String LOG_TAG = "MovieAdapter";
+    private static final String PICASSO_ERROR = "Picasso loading error";
     private ArrayList<Movie> mMovies;
     private Context mContext;
     private final MovieAdapterClickHandler mClickHandler;
@@ -37,14 +41,15 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     public class MovieAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         // The title and the post of the Movie
-        public final TextView mTitleTextView;
-        public final ImageView mPosterImageView;
+        @BindView (R.id.title) TextView mTitleTextView;
+        @BindView (R.id.poster) ImageView mPosterImageView;
 
         // Constructor for the ViewHolder class
         public MovieAdapterViewHolder(View view) {
             super(view);
-            mTitleTextView = (TextView) view.findViewById(R.id.title);
-            mPosterImageView = (ImageView) view.findViewById(R.id.poster);
+
+            // Butterknife binding
+            ButterKnife.bind(this, view);
             view.setOnClickListener(this);
         }
 
@@ -82,7 +87,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
             @Override
             public void onError() {
-                Log.e(LOG_TAG, "Picasso loading error");
+                Log.e(LOG_TAG, PICASSO_ERROR);
             }
         });
     }

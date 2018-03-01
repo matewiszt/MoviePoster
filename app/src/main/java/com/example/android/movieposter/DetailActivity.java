@@ -7,19 +7,25 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class DetailActivity extends AppCompatActivity {
+
+    // Butterknife inits
+    @BindView(R.id.detail_title_tv) TextView mTitleTextView;
+    @BindView(R.id.detail_image_iv) ImageView mPosterImageView;
+    @BindView(R.id.detail_synopsis_tv) TextView mSynopsisTextView;
+    @BindView(R.id.detail_rating_tv) TextView mRatingTextView;
+    @BindView(R.id.detail_date_tv) TextView mReleaseDateTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        // Find all the views of activity_detail.xml
-        TextView mTitleTextView = (TextView) findViewById(R.id.detail_title_tv);
-        ImageView mPosterImageView = (ImageView) findViewById(R.id.detail_image_iv);
-        TextView mSynopsisTextView = (TextView) findViewById(R.id.detail_synopsis_tv);
-        TextView mRatingTextView = (TextView) findViewById(R.id.detail_rating_tv);
-        TextView mReleaseDateTextView = (TextView) findViewById(R.id.detail_date_tv);
+        // Butterknife binding
+        ButterKnife.bind(this);
 
         // Initialize the local variables for the Intent extras
         int id = 0;

@@ -24,6 +24,9 @@ import com.example.android.movieposter.network.QueryHelpers;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<List<Movie>>,
         MovieAdapter.MovieAdapterClickHandler,
@@ -42,23 +45,22 @@ public class MainActivity extends AppCompatActivity
 
     private boolean mSettingsUpdated = false;
 
-    private LinearLayout mRecyclerContainer;
-    private TextView mRecyclerTitle;
-    private RecyclerView mRecyclerView;
+    // Butterknife inits
+    @BindView(R.id.recycler_container) LinearLayout mRecyclerContainer;
+    @BindView(R.id.recycler_title) TextView mRecyclerTitle;
+    @BindView(R.id.recyclerView) RecyclerView mRecyclerView;
+    @BindView(R.id.empty_tv) TextView mEmptyView;
+    @BindView(R.id.progress_bar) ProgressBar mProgressBar;
+
     private MovieAdapter mAdapter;
-    private TextView mEmptyView;
-    private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mRecyclerContainer = (LinearLayout) findViewById(R.id.recycler_container);
-        mRecyclerTitle = (TextView) findViewById(R.id.recycler_title);
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        mEmptyView = (TextView) findViewById(R.id.empty_tv);
-        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        // Butterknife binding
+        ButterKnife.bind(this);
 
         // Create a new GridLayoutManager and set it to the RecyclerView
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
