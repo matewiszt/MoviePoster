@@ -32,31 +32,21 @@ public class DetailActivity extends AppCompatActivity {
         String title = null;
         String image = null;
         String synopsis = null;
-        double rating = 0;
+        String rating = null;
         String date = null;
+        Movie movie = null;
 
         // If we have extras, check if the extras have the following keys and store them in the variables
         Bundle extras = getIntent().getExtras();
         if (extras != null){
 
-            // The id is for later use
-            if (extras.containsKey(MainActivity.DETAIL_KEY_ID)) {
-                id = extras.getInt(MainActivity.DETAIL_KEY_ID);
-            }
-            if (extras.containsKey(MainActivity.DETAIL_KEY_TITLE)) {
-                title = extras.getString(MainActivity.DETAIL_KEY_TITLE);
-            }
-            if (extras.containsKey(MainActivity.DETAIL_KEY_IMAGE)) {
-                image = extras.getString(MainActivity.DETAIL_KEY_IMAGE);
-            }
-            if (extras.containsKey(MainActivity.DETAIL_KEY_SYNOPSIS)) {
-                synopsis = extras.getString(MainActivity.DETAIL_KEY_SYNOPSIS);
-            }
-            if (extras.containsKey(MainActivity.DETAIL_KEY_RATING)) {
-                rating = extras.getDouble(MainActivity.DETAIL_KEY_RATING);
-            }
-            if (extras.containsKey(MainActivity.DETAIL_KEY_DATE)) {
-                date = extras.getString(MainActivity.DETAIL_KEY_DATE);
+            if (extras.containsKey(MainActivity.DETAIL_MOVIE_KEY)) {
+                movie = extras.getParcelable(MainActivity.DETAIL_MOVIE_KEY);
+                title = movie.getTitle();
+                image = movie.getImageFullPath();
+                synopsis = movie.getSynopsis();
+                rating = String.valueOf(movie.getRating());
+                date = movie.getReleaseDate();
             }
         }
 
@@ -68,7 +58,7 @@ public class DetailActivity extends AppCompatActivity {
         Picasso.with(this).load(image).into(mPosterImageView);
         mPosterImageView.setContentDescription(title);
         mSynopsisTextView.setText(synopsis);
-        mRatingTextView.setText(String.valueOf(rating));
+        mRatingTextView.setText(rating);
         mReleaseDateTextView.setText(date);
     }
 }

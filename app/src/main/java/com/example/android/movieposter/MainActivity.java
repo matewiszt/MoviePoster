@@ -36,12 +36,7 @@ public class MainActivity extends AppCompatActivity
     private String LOG_TAG = getClass().getName();
 
     // Intent extra keys - public because we use the same ones in the DetailActivity to return them
-    public static final String DETAIL_KEY_ID = "id";
-    public static final String DETAIL_KEY_TITLE = "title";
-    public static final String DETAIL_KEY_IMAGE = "image";
-    public static final String DETAIL_KEY_SYNOPSIS = "synopsis";
-    public static final String DETAIL_KEY_RATING = "rating";
-    public static final String DETAIL_KEY_DATE = "date";
+    public static final String DETAIL_MOVIE_KEY = "movie";
 
     private boolean mSettingsUpdated = false;
 
@@ -142,14 +137,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onClickHandler(Movie movie) {
 
-        // Create an Intent to launch the DetailActivity and pass the current Movie data
+        // Create an Intent to launch the DetailActivity and pass the current Movie object
         Intent detailLaunchIntent = new Intent(this, DetailActivity.class);
-        detailLaunchIntent.putExtra(DETAIL_KEY_ID, movie.getId());
-        detailLaunchIntent.putExtra(DETAIL_KEY_TITLE, movie.getTitle());
-        detailLaunchIntent.putExtra(DETAIL_KEY_IMAGE, movie.getImageFullPath());
-        detailLaunchIntent.putExtra(DETAIL_KEY_SYNOPSIS, movie.getSynopsis());
-        detailLaunchIntent.putExtra(DETAIL_KEY_RATING, movie.getRating());
-        detailLaunchIntent.putExtra(DETAIL_KEY_DATE, movie.getReleaseDate());
+        detailLaunchIntent.putExtra(DETAIL_MOVIE_KEY, movie);
 
         // Start the DetailActivity
         startActivity(detailLaunchIntent);
