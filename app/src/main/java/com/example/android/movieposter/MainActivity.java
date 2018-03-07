@@ -1,14 +1,13 @@
 package com.example.android.movieposter;
 
-import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.Loader;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,17 +18,18 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.example.android.movieposter.network.MovieLoader;
-import com.example.android.movieposter.network.QueryHelpers;
+import com.example.android.movieposter.network.MovieService;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity
-        implements LoaderManager.LoaderCallbacks<List<Movie>>,
-        MovieAdapter.MovieAdapterClickHandler,
+        implements MovieAdapter.MovieAdapterClickHandler,
         SharedPreferences.OnSharedPreferenceChangeListener {
 
     // Log tag
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity
         // If the device is connected to the internet, initialize a Loader
         if (isConnected) {
 
-            getLoaderManager().initLoader(0, null, this);
+            loadMovies();
 
         } else {
 
@@ -85,53 +85,6 @@ public class MainActivity extends AppCompatActivity
 
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
 
-    }
-
-    @Override
-    public Loader<List<Movie>> onCreateLoader(int i, Bundle bundle) {
-
-        showProgressBar();
-
-        // Return a new Loader with the URL composed from the endpoint returned from the Settings
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String endpoint = preferences.getString(getString(R.string.sort_order_key), getString(R.string.sort_order_popular_value));
-        return new MovieLoader(this, QueryHelpers.composeEndpointUrl(endpoint));
-    }
-
-    @Override
-    public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> movies) {
-
-        // Clear the adapter and if our list is not empty, fill it with the data returned by the Loader
-        mAdapter.setMovieData(null);
-
-        if (movies != null){
-            mAdapter.setMovieData(movies);
-
-            //Set the title based on the Settings
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            String endpoint = preferences.getString(getString(R.string.sort_order_key), getString(R.string.sort_order_popular_value));
-            String title = "";
-            switch (endpoint){
-                case "top_rated":
-                    title = getString(R.string.title_top_rated);
-                    break;
-                case "popular":
-                    title = getString(R.string.title_popular);
-            }
-            mRecyclerTitle.setText(title);
-
-            // Make the movie list visible
-            showRecyclerContainer();
-        } else {
-            showEmptyText();
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<List<Movie>> loader) {
-
-        // Clear the adapter
-        mAdapter.setMovieData(null);
     }
 
     @Override
@@ -151,7 +104,7 @@ public class MainActivity extends AppCompatActivity
 
         // If the flag is true, restart the Loader and set the flag back to false
         if (mSettingsUpdated) {
-            getLoaderManager().restartLoader(0, null, this);
+            loadMovies();
             mSettingsUpdated = false;
         }
     }
@@ -189,6 +142,68 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /*
+     * Load the movies via MovieService class
+     */
+    private void loadMovies() {
+
+        // Show the progress bar
+        showProgressBar();
+
+        // Get the sort order from Preferences
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String endpoint = preferences.getString(getString(R.string.sort_order_key), getString(R.string.sort_order_popular_value));
+
+        // Make a call with the endpoint
+        Call<Movies> call = MovieService.getMovies(endpoint);
+
+        if (call != null) {
+
+            call.enqueue(new Callback<Movies>() {
+                @Override
+                public void onResponse(@NonNull Call<Movies> call, @NonNull Response<Movies> response) {
+
+                    // Clear the adapter
+                    mAdapter.setMovieData(null);
+
+                    // Get the body of the response
+                    Movies movies = response.body();
+
+                    // If movie list is not null, set as the adapter data
+                    if (movies != null) {
+                        List<Movie> movieList = movies.items;
+                        mAdapter.setMovieData(movieList);
+
+                        //Set the title based on the Settings
+                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                        String endpoint = preferences.getString(getString(R.string.sort_order_key), getString(R.string.sort_order_popular_value));
+                        String title = "";
+                        switch (endpoint){
+                            case "top_rated":
+                                title = getString(R.string.title_top_rated);
+                                break;
+                            case "popular":
+                                title = getString(R.string.title_popular);
+                        }
+                        mRecyclerTitle.setText(title);
+
+                        // Make the movie list visible
+                        showRecyclerContainer();
+                    } else {
+                        showEmptyText();
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<Movies> call, @NonNull Throwable t) {
+                    call.cancel();
+                    showEmptyText();
+                }
+            });
+
+        }
     }
 
     /*

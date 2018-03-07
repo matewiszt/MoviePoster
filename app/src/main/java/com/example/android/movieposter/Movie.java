@@ -7,17 +7,39 @@ package com.example.android.movieposter;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Movie implements Parcelable {
 
-    // Properties of the class
-    private int mId;
-    private String mTitle;
-    private String mThumbnailImagePath;
-    private String mSynopsis;
-    private double mUserRating;
-    private String mReleaseDate;
+    // JSON key constants for serializing the JSON
+    private static final String JSON_KEY_ID = "id";
+    private static final String JSON_KEY_TITLE = "title";
+    private static final String JSON_KEY_IMAGE = "poster_path";
+    private static final String JSON_KEY_SYNOPSIS = "overview";
+    private static final String JSON_KEY_RATING = "vote_average";
+    private static final String JSON_KEY_DATE = "release_date";
 
+    // Image base path
     private static final String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w185";
+
+    // Properties of the class
+    @SerializedName(JSON_KEY_ID)
+    private int mId;
+
+    @SerializedName(JSON_KEY_TITLE)
+    private String mTitle;
+
+    @SerializedName(JSON_KEY_IMAGE)
+    private String mThumbnailImagePath;
+
+    @SerializedName(JSON_KEY_SYNOPSIS)
+    private String mSynopsis;
+
+    @SerializedName(JSON_KEY_RATING)
+    private double mUserRating;
+
+    @SerializedName(JSON_KEY_DATE)
+    private String mReleaseDate;
 
     // Public constructor for an instance of the Movie class
     public Movie(int id, String title, String imagePath, String synopsis, double rating, String releaseDate) {

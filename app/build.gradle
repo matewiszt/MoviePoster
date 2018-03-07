@@ -26,11 +26,14 @@ repositories {
 }
 
 dependencies {
-    compile 'com.android.support:preference-v7:26.1.0'
-    compile 'com.android.support:recyclerview-v7:26.1.0'
-    compile 'com.jakewharton:butterknife:8.8.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
-    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.android.support:preference-v7:26.1.0' // For SharedPreferences
+    compile 'com.android.support:recyclerview-v7:26.1.0' // For RecyclerView
+    compile 'com.jakewharton:butterknife:8.8.1' // Butterknife
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1' // Butterknife compiler
+    compile 'com.squareup.retrofit2:retrofit:2.3.0' // Retrofit
+    compile 'com.google.code.gson:gson:2.8.0' // GSON
+    compile 'com.squareup.retrofit2:converter-gson:2.3.0' //GSON converter
+    compile 'com.squareup.picasso:picasso:2.5.2' // Picasso
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
