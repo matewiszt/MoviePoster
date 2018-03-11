@@ -159,51 +159,52 @@ public class MainActivity extends AppCompatActivity
         // Make a call with the endpoint
         Call<Movies> call = MovieService.getMovies(endpoint);
 
-        if (call != null) {
+        if (call == null) {
+            return;
+        }
 
-            call.enqueue(new Callback<Movies>() {
-                @Override
-                public void onResponse(@NonNull Call<Movies> call, @NonNull Response<Movies> response) {
+        call.enqueue(new Callback<Movies>() {
+            @Override
+            public void onResponse(@NonNull Call<Movies> call, @NonNull Response<Movies> response) {
 
-                    // Clear the adapter
-                    mAdapter.setMovieData(null);
+                // Clear the adapter
+                mAdapter.setMovieData(null);
 
-                    // Get the body of the response
-                    Movies movies = response.body();
+                // Get the body of the response
+                Movies movies = response.body();
 
-                    // If movie list is not null, set as the adapter data
-                    if (movies != null) {
-                        List<Movie> movieList = movies.items;
-                        mAdapter.setMovieData(movieList);
+                // If movie list is not null, set as the adapter data
+                if (movies != null) {
+                    List<Movie> movieList = movies.items;
+                    mAdapter.setMovieData(movieList);
 
-                        //Set the title based on the Settings
-                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                        String endpoint = preferences.getString(getString(R.string.sort_order_key), getString(R.string.sort_order_popular_value));
-                        String title = "";
-                        switch (endpoint){
-                            case "top_rated":
-                                title = getString(R.string.title_top_rated);
-                                break;
-                            case "popular":
-                                title = getString(R.string.title_popular);
-                        }
-                        mRecyclerTitle.setText(title);
-
-                        // Make the movie list visible
-                        showRecyclerContainer();
-                    } else {
-                        showEmptyText();
+                    //Set the title based on the Settings
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                    String endpoint = preferences.getString(getString(R.string.sort_order_key), getString(R.string.sort_order_popular_value));
+                    String title = "";
+                    switch (endpoint){
+                        case "top_rated":
+                            title = getString(R.string.title_top_rated);
+                            break;
+                        case "popular":
+                            title = getString(R.string.title_popular);
                     }
-                }
+                    mRecyclerTitle.setText(title);
 
-                @Override
-                public void onFailure(@NonNull Call<Movies> call, @NonNull Throwable t) {
-                    call.cancel();
+                    // Make the movie list visible
+                    showRecyclerContainer();
+                } else {
                     showEmptyText();
                 }
-            });
+            }
 
-        }
+            @Override
+            public void onFailure(@NonNull Call<Movies> call, @NonNull Throwable t) {
+                call.cancel();
+                showEmptyText();
+            }
+        });
+
     }
 
     /*

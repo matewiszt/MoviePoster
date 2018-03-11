@@ -1,7 +1,11 @@
 package com.example.android.movieposter.network;
 
+import android.support.annotation.NonNull;
+
 import com.example.android.movieposter.BuildConfig;
 import com.example.android.movieposter.Movies;
+import com.example.android.movieposter.Reviews;
+import com.example.android.movieposter.Trailers;
 
 import java.io.IOException;
 
@@ -25,21 +29,36 @@ public class MovieService {
     private static final String API_QUERY_PARAM_LANG = "language";
     private static final String LANGCODE = "en-US";
 
+    // Create a private constructor because we won't create an instance of this class
     private MovieService(){}
 
+    /*
+    * Create an interface for the MovieAPI
+    */
     private interface MovieAPI {
         @GET("movie/{endpoint}")
         Call<Movies> fetchMovies(@Path("endpoint") String endpoint);
 
+        @GET("movie/{id}/videos")
+        Call<Trailers> fetchTrailers(@Path("id") String id);
+
+        @GET("movie/{id}/reviews")
+        Call<Reviews> fetchReviews(@Path("id") String id);
+
     }
 
+    /*
+    * Create a standard API request with api key and English language parameter
+    * @return Retrofit: the API service instance
+    */
     private static Retrofit getApiService() throws IOException {
 
+        // Create a new HTTP client and add an interceptor to always include api key and English language code
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         OkHttpClient client = httpClient.addInterceptor(new Interceptor() {
 
             @Override
-            public Response intercept(Chain chain) throws IOException {
+            public Response intercept(@NonNull Chain chain) throws IOException {
                 Request original = chain.request();
                 HttpUrl originalHttpUrl = original.url();
 
@@ -57,7 +76,8 @@ public class MovieService {
 
             }
         }).build();
-        // Create a very simple REST adapter which points to the BASE_URL
+
+        // Create a basic REST adapter which points to the BASE_URL
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .client(client)
@@ -67,7 +87,11 @@ public class MovieService {
         return retrofit;
     }
 
-    public static Call<Movies> getMovies(String endpoint) {
+    /*
+    * Implementation of the MovieAPI interface
+    * @return MovieAPI: the implemented interface
+    */
+    private static MovieAPI implementApi() {
 
         Retrofit service = null;
 
@@ -82,9 +106,48 @@ public class MovieService {
             return null;
         }
 
-        MovieAPI movieAPI = service.create(MovieAPI.class);
+        return service.create(MovieAPI.class);
 
-        return movieAPI.fetchMovies(endpoint);
+    }
+
+    /*
+    * Implementation of the fetchMovies abstract method
+    * @param endpoint: the endpoint (popular/top_rated) to query
+    * @return Call<Movies>: a call which returns a Movies object
+    */
+    public static Call<Movies> getMovies(String endpoint) {
+
+        MovieAPI api = implementApi();
+
+        if (api != null) {
+            return api.fetchMovies(endpoint);
+        }
+
+        return null;
+
+    }
+
+    public static Call<Trailers> getTrailers(int id) {
+
+        MovieAPI api = implementApi();
+
+        if (api != null) {
+            return api.fetchTrailers(String.valueOf(id));
+        }
+
+        return null;
+
+    }
+
+    public static Call<Reviews> getReviews(int id) {
+
+        MovieAPI api = implementApi();
+
+        if (api != null) {
+            return api.fetchReviews(String.valueOf(id));
+        }
+
+        return null;
 
     }
 }
