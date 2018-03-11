@@ -1,4 +1,4 @@
-package com.example.android.movieposter;
+package com.example.android.movieposter.movies;
 
 /*
  * Movie class to store data related to one movie

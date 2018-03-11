@@ -18,6 +18,9 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.android.movieposter.movies.Movie;
+import com.example.android.movieposter.movies.MovieAdapter;
+import com.example.android.movieposter.movies.Movies;
 import com.example.android.movieposter.network.MovieService;
 
 import java.util.List;

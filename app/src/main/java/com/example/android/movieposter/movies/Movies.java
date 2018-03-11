@@ -1,4 +1,4 @@
-package com.example.android.movieposter;
+package com.example.android.movieposter.movies;
 
 import com.google.gson.annotations.SerializedName;
 

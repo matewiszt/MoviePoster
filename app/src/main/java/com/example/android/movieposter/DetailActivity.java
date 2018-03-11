@@ -14,7 +14,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.android.movieposter.movies.Movie;
 import com.example.android.movieposter.network.MovieService;
+import com.example.android.movieposter.reviews.Review;
+import com.example.android.movieposter.reviews.ReviewAdapter;
+import com.example.android.movieposter.reviews.Reviews;
+import com.example.android.movieposter.trailers.Trailer;
+import com.example.android.movieposter.trailers.TrailerAdapter;
+import com.example.android.movieposter.trailers.Trailers;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

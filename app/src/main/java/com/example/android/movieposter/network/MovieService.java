@@ -3,9 +3,9 @@ package com.example.android.movieposter.network;
 import android.support.annotation.NonNull;
 
 import com.example.android.movieposter.BuildConfig;
-import com.example.android.movieposter.Movies;
-import com.example.android.movieposter.Reviews;
-import com.example.android.movieposter.Trailers;
+import com.example.android.movieposter.movies.Movies;
+import com.example.android.movieposter.reviews.Reviews;
+import com.example.android.movieposter.trailers.Trailers;
 
 import java.io.IOException;
 

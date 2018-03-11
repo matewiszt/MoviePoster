@@ -1,4 +1,4 @@
-package com.example.android.movieposter;
+package com.example.android.movieposter.movies;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.android.movieposter.R;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
