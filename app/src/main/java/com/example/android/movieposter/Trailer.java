@@ -10,6 +10,8 @@ public class Trailer {
     private static final String JSON_KEY_KEY = "key";
     private static final String JSON_KEY_TYPE = "type";
 
+    private static final String TRAILER_BASE_URL = "https://www.youtube.com/watch?v=";
+
     @SerializedName(JSON_KEY_ID)
     public String mId;
 
@@ -71,6 +73,10 @@ public class Trailer {
 
     public void setType(String newType) {
         mType = newType;
+    }
+
+    public String getFullPath(){
+        return TRAILER_BASE_URL.concat(mKey);
     }
 
 }

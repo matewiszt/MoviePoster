@@ -1,8 +1,10 @@
 package com.example.android.movieposter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -23,7 +25,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class DetailActivity extends AppCompatActivity {
+public class DetailActivity extends AppCompatActivity implements TrailerAdapter.TrailerAdapterClickHandler {
 
     // Butterknife inits
     @BindView(R.id.detail_title_tv) TextView mTitleTextView;
@@ -33,9 +35,12 @@ public class DetailActivity extends AppCompatActivity {
     @BindView(R.id.detail_date_tv) TextView mReleaseDateTextView;
     @BindView(R.id.detail_reviews_lv) RecyclerView mReviewsRecyclerView;
     @BindView(R.id.detail_reviews_empty_tv) TextView mReviewEmptyView;
+    @BindView(R.id.detail_trailers_lv) RecyclerView mTrailersRecyclerView;
+    @BindView(R.id.detail_trailers_empty_tv) TextView mTrailerEmptyView;
 
     private int mId;
     private ReviewAdapter mReviewAdapter;
+    private TrailerAdapter mTrailerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,9 +96,13 @@ public class DetailActivity extends AppCompatActivity {
 
         LinearLayoutManager reviewLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mReviewsRecyclerView.setLayoutManager(reviewLayoutManager);
-
         mReviewAdapter = new ReviewAdapter(this);
         mReviewsRecyclerView.setAdapter(mReviewAdapter);
+
+        LinearLayoutManager trailerLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        mTrailersRecyclerView.setLayoutManager(trailerLayoutManager);
+        mTrailerAdapter = new TrailerAdapter(this, this);
+        mTrailersRecyclerView.setAdapter(mTrailerAdapter);
 
         // Initialize a ConnectivityManager to get the active network info
         ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -109,6 +118,7 @@ public class DetailActivity extends AppCompatActivity {
 
         } else {
             showReviewEmptyText();
+            showTrailerEmptyText();
         }
     }
 
@@ -166,26 +176,43 @@ public class DetailActivity extends AppCompatActivity {
         call.enqueue(new Callback<Trailers>() {
             @Override
             public void onResponse(@NonNull Call<Trailers> call, @NonNull Response<Trailers> response) {
+
+                mTrailerAdapter.setTrailerData(null);
+
                 Trailers trailers = response.body();
 
-                if (trailers != null) {
+                if (trailers != null && trailers.getItems().size() > 0) {
 
                     List<Trailer> trailerList = trailers.getItems();
+                    mTrailerAdapter.setTrailerData(trailerList);
+                    showTrailerRecyclerContainer();
 
+                } else {
+                    showTrailerEmptyText();
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<Trailers> call, @NonNull Throwable t) {
                 call.cancel();
+                showTrailerEmptyText();
             }
         });
 
     }
 
+    @Override
+    public void onClickHandler(Trailer trailer) {
+        Uri url = Uri.parse(trailer.getFullPath());
+        Intent launchTrailerIntent = new Intent(Intent.ACTION_VIEW, url);
+        if (launchTrailerIntent.resolveActivity(getPackageManager()) != null){
+            startActivity(launchTrailerIntent);
+        }
+    }
+
     /*
-    * Hide the empty text and show the recycler container
-    */
+        * Hide the empty text and show the recycler container
+        */
     private void showReviewRecyclerContainer(){
         mReviewEmptyView.setVisibility(View.INVISIBLE);
         mReviewsRecyclerView.setVisibility(View.VISIBLE);
@@ -197,5 +224,21 @@ public class DetailActivity extends AppCompatActivity {
     private void showReviewEmptyText(){
         mReviewsRecyclerView.setVisibility(View.INVISIBLE);
         mReviewEmptyView.setVisibility(View.VISIBLE);
+    }
+
+    /*
+    * Hide the empty text and show the recycler container
+    */
+    private void showTrailerRecyclerContainer(){
+        mTrailerEmptyView.setVisibility(View.INVISIBLE);
+        mTrailersRecyclerView.setVisibility(View.VISIBLE);
+    }
+
+    /*
+   * Hide the recycler container and show the empty text
+   */
+    private void showTrailerEmptyText(){
+        mTrailersRecyclerView.setVisibility(View.INVISIBLE);
+        mTrailerEmptyView.setVisibility(View.VISIBLE);
     }
 }

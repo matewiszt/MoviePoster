@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ImageView
+        android:id="@+id/trailer_item_icon_iv"
+        android:src="@drawable/ic_action_youtube"
+        android:adjustViewBounds="true"
+        android:tint="@color/colorYouTube"
+        android:layout_width="48dp"
+        android:layout_height="48dp" />
+
+    <TextView
+        android:id="@+id/trailer_item_name_tv"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/detail_half_spacing"
+        android:paddingEnd="@dimen/detail_half_spacing"
+        android:layout_gravity="center_vertical"
+        android:textStyle="bold"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        tools:text="Trailer 1" />
+
+    <TextView
+        android:id="@+id/review_item_type_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:textStyle="bold"
+        tools:text="Trailer" />
+
+</LinearLayout>
