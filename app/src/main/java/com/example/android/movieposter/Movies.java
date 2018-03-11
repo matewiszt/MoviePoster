@@ -10,6 +10,8 @@ import java.util.List;
 
 public class Movies {
 
+    private Movies(){}
+
     private static final String JSON_KEY_RESULTS = "results";
 
     // Collection of movies
