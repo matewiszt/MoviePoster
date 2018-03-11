@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="list_item_default_spacing">12dp</dimen>
+    <dimen name="list_item_poster_max_width">185dp</dimen>
     <dimen name="detail_default_spacing">12dp</dimen>
     <dimen name="detail_half_spacing">6dp</dimen>
     <dimen name="progress_bar_dimen">60dp</dimen>

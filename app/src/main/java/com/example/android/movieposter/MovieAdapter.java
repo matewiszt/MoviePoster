@@ -88,8 +88,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
             @Override
             public void onError() {
                 Log.e(LOG_TAG, PICASSO_ERROR);
+                holder.mPosterImageView.setImageResource(R.drawable.poster_placeholder);
+                holder.mTitleTextView.setText(actualTitle);
+                holder.mPosterImageView.setContentDescription(actualTitle);
             }
         });
+
     }
 
     @Override

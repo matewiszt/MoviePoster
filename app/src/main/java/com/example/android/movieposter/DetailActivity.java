@@ -55,7 +55,11 @@ public class DetailActivity extends AppCompatActivity {
                 movie = extras.getParcelable(MainActivity.DETAIL_MOVIE_KEY);
                 mId = movie.getId();
                 title = movie.getTitle();
-                image = movie.getImageFullPath();
+                if (movie.getImagePath() != null){
+                    image = movie.getImageFullPath();
+                } else {
+                    image = null;
+                }
                 synopsis = movie.getSynopsis();
                 rating = String.valueOf(movie.getRating());
                 date = movie.getReleaseDate();
@@ -65,9 +69,15 @@ public class DetailActivity extends AppCompatActivity {
         // Set the Movie title as the title of the Activity
         setTitle(title);
 
+        // If there is no poster accessible, set the image placeholder as poster
+        if (image != null){
+            Picasso.with(this).load(image).into(mPosterImageView);
+        } else {
+            mPosterImageView.setImageResource(R.drawable.poster_placeholder);
+        }
+
         // Pass the data to the proper Views
         mTitleTextView.setText(title);
-        Picasso.with(this).load(image).into(mPosterImageView);
         mPosterImageView.setContentDescription(title);
         mSynopsisTextView.setText(synopsis);
         mRatingTextView.setText(rating);
