@@ -23,4 +23,16 @@ public class Reviews {
     // ID of the movie which the trailers belong to
     @SerializedName(JSON_KEY_ID)
     public int movieId;
+
+    public int getReviewCount() {
+        return reviewCount;
+    }
+
+    public List<Review> getItems() {
+        return items;
+    }
+
+    public int getMovieId() {
+        return movieId;
+    }
 }

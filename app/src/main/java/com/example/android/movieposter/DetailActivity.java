@@ -6,6 +6,9 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -28,8 +31,11 @@ public class DetailActivity extends AppCompatActivity {
     @BindView(R.id.detail_synopsis_tv) TextView mSynopsisTextView;
     @BindView(R.id.detail_rating_tv) TextView mRatingTextView;
     @BindView(R.id.detail_date_tv) TextView mReleaseDateTextView;
+    @BindView(R.id.detail_reviews_lv) RecyclerView mReviewsRecyclerView;
+    @BindView(R.id.detail_reviews_empty_tv) TextView mReviewEmptyView;
 
-    public int mId;
+    private int mId;
+    private ReviewAdapter mReviewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,21 +89,32 @@ public class DetailActivity extends AppCompatActivity {
         mRatingTextView.setText(rating);
         mReleaseDateTextView.setText(date);
 
+        LinearLayoutManager reviewLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        mReviewsRecyclerView.setLayoutManager(reviewLayoutManager);
+
+        mReviewAdapter = new ReviewAdapter(this);
+        mReviewsRecyclerView.setAdapter(mReviewAdapter);
+
         // Initialize a ConnectivityManager to get the active network info
         ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 
         boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
 
-        // If the device is connected to the internet, initialize a Loader
+        // If the device is connected to the internet, initialize the API calls
         if (isConnected) {
 
             loadReviews();
             loadTrailers();
 
+        } else {
+            showReviewEmptyText();
         }
     }
 
+    /*
+        * Load the reviews of the Movie
+        */
     private void loadReviews() {
 
         // Make a call with the endpoint
@@ -110,22 +127,33 @@ public class DetailActivity extends AppCompatActivity {
         call.enqueue(new Callback<Reviews>() {
             @Override
             public void onResponse(@NonNull Call<Reviews> call, @NonNull Response<Reviews> response) {
+
+                mReviewAdapter.setReviewData(null);
+
                 Reviews reviews = response.body();
 
-                if (reviews != null) {
+                if (reviews != null && reviews.getReviewCount() > 0) {
 
-                    List<Review> reviewList = reviews.items;
+                    List<Review> reviewList = reviews.getItems();
+                    mReviewAdapter.setReviewData(reviewList);
+                    showReviewRecyclerContainer();
+                } else {
+                    showReviewEmptyText();
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<Reviews> call, @NonNull Throwable t) {
                 call.cancel();
+                showReviewEmptyText();
             }
         });
 
     }
 
+    /*
+    * Load the trailers of the Movie
+    */
     private void loadTrailers() {
 
         // Make a call with the endpoint
@@ -153,5 +181,21 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    /*
+    * Hide the empty text and show the recycler container
+    */
+    private void showReviewRecyclerContainer(){
+        mReviewEmptyView.setVisibility(View.INVISIBLE);
+        mReviewsRecyclerView.setVisibility(View.VISIBLE);
+    }
+
+    /*
+   * Hide the recycler container and show the empty text
+   */
+    private void showReviewEmptyText(){
+        mReviewsRecyclerView.setVisibility(View.INVISIBLE);
+        mReviewEmptyView.setVisibility(View.VISIBLE);
     }
 }

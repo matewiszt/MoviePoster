@@ -20,7 +20,7 @@ import butterknife.ButterKnife;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
 
-    private static final String LOG_TAG = "MovieAdapter";
+    private static final String LOG_TAG = MovieAdapter.class.getSimpleName();
     private static final String PICASSO_ERROR = "Picasso loading error";
     private ArrayList<Movie> mMovies;
     private Context mContext;

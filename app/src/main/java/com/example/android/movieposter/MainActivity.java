@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity
 
         boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
 
-        // If the device is connected to the internet, initialize a Loader
+        // If the device is connected to the internet, load the movies
         if (isConnected) {
 
             loadMovies();
