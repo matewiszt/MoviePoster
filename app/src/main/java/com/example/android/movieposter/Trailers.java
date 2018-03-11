@@ -18,4 +18,12 @@ public class Trailers {
     // ID of the movie which the trailers belong to
     @SerializedName(JSON_KEY_ID)
     public int movieId;
+
+    public int getMovieId() {
+        return movieId;
+    }
+
+    public List<Trailer> getItems() {
+        return items;
+    }
 }

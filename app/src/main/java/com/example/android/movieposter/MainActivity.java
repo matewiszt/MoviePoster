@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity
 
                 // If movie list is not null, set as the adapter data
                 if (movies != null) {
-                    List<Movie> movieList = movies.items;
+                    List<Movie> movieList = movies.getItems();
                     mAdapter.setMovieData(movieList);
 
                     //Set the title based on the Settings

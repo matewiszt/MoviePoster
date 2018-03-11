@@ -170,7 +170,7 @@ public class DetailActivity extends AppCompatActivity {
 
                 if (trailers != null) {
 
-                    List<Trailer> trailerList = trailers.items;
+                    List<Trailer> trailerList = trailers.getItems();
 
                 }
             }

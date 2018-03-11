@@ -17,4 +17,8 @@ public class Movies {
     // Collection of movies
     @SerializedName(JSON_KEY_RESULTS)
     public List<Movie> items = null;
+
+    public List<Movie> getItems() {
+        return items;
+    }
 }

@@ -8,6 +8,7 @@ public class Trailer {
     private static final String JSON_KEY_NAME = "name";
     private static final String JSON_KEY_SITE = "site";
     private static final String JSON_KEY_KEY = "key";
+    private static final String JSON_KEY_TYPE = "type";
 
     @SerializedName(JSON_KEY_ID)
     public String mId;
@@ -21,11 +22,15 @@ public class Trailer {
     @SerializedName(JSON_KEY_SITE)
     public String mSite;
 
-    public Trailer(String id, String key, String name, String site){
+    @SerializedName(JSON_KEY_TYPE)
+    public String mType;
+
+    public Trailer(String id, String key, String name, String site, String type){
         mId = id;
         mKey = key;
         mName = name;
         mSite = site;
+        mType = type;
     }
 
     public String getId(){
@@ -58,6 +63,14 @@ public class Trailer {
 
     public void setSite(String newSite){
         mSite = newSite;
+    }
+
+    public String getType() {
+        return mType;
+    }
+
+    public void setType(String newType) {
+        mType = newType;
     }
 
 }
