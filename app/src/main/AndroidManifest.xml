@@ -35,8 +35,8 @@
         <!--ContentProvider for favourites-->
 
         <provider
-            android:authorities=".data.FavouritesProvider"
-            android:name="com.example.android.movieposter.data.FavouritesProvider"
+            android:authorities="com.example.android.movieposter"
+            android:name=".data.FavouritesProvider"
             android:exported="false" />
     </application>
 
