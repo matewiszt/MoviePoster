@@ -56,10 +56,10 @@ public class FavouritesProvider extends ContentProvider {
             case CODE_FAVOURITES_ITEM:
 
                 // If the Uri matches the item code, call the db query function on the specific item
-                String[] args = {String.valueOf(ContentUris.parseId(uri))};
+                String[] args = {uri.getLastPathSegment()};
                 cursor = db.query(FavouritesEntry.TABLE_NAME,
                         projection,
-                        FavouritesEntry._ID + "=?",
+                        FavouritesEntry.COLUMN_MOVIE_ID + "=?",
                         args,
                         null,
                         null,
@@ -127,7 +127,7 @@ public class FavouritesProvider extends ContentProvider {
 
                     // If the insert was successful, notify the ContentResolver about the change and return the new Uri
                     getContext().getContentResolver().notifyChange(uri, null);
-                    return ContentUris.withAppendedId(uri, newRowId);
+                    return ContentUris.withAppendedId(uri, movieId);
 
                 }
 
@@ -185,11 +185,11 @@ public class FavouritesProvider extends ContentProvider {
             case CODE_FAVOURITES_ITEM:
 
                 // Call the db update function on the specific item
-                String[] args = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                String[] args = new String[]{uri.getLastPathSegment()};
                 numberOfRowsUpdated = db.update(
                         FavouritesEntry.TABLE_NAME,
                         contentValues,
-                        FavouritesEntry._ID + "=?",
+                        FavouritesEntry.COLUMN_MOVIE_ID + "=?",
                         args);
                 break;
             default:
@@ -221,8 +221,8 @@ public class FavouritesProvider extends ContentProvider {
             case CODE_FAVOURITES_ITEM:
 
                 // Call the db update function on the specific item
-                String[] args = {String.valueOf(ContentUris.parseId(uri))};
-                numberOfRowsDeleted = db.delete(FavouritesEntry.TABLE_NAME, FavouritesEntry._ID + "=?", args);
+                String[] args = {uri.getLastPathSegment()};
+                numberOfRowsDeleted = db.delete(FavouritesEntry.TABLE_NAME, FavouritesEntry.COLUMN_MOVIE_ID + "=?", args);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

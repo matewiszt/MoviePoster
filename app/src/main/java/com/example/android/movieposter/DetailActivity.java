@@ -1,5 +1,6 @@
 package com.example.android.movieposter;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -12,8 +13,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.android.movieposter.data.FavouritesContract.FavouritesEntry;
 import com.example.android.movieposter.movies.Movie;
 import com.example.android.movieposter.network.MovieService;
 import com.example.android.movieposter.reviews.Review;
@@ -44,10 +48,20 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
     @BindView(R.id.detail_reviews_empty_tv) TextView mReviewEmptyView;
     @BindView(R.id.detail_trailers_lv) RecyclerView mTrailersRecyclerView;
     @BindView(R.id.detail_trailers_empty_tv) TextView mTrailerEmptyView;
+    @BindView(R.id.detail_favourite_button) RelativeLayout mFavouriteButton;
+    @BindView(R.id.detail_favourite_icon) ImageView mFavouriteIcon;
 
     private int mId;
+    private String mTitle;
+    private String mImagePath;
+    private String mSynopsis;
+    private double mRating;
+    private String mDate;
+
     private ReviewAdapter mReviewAdapter;
     private TrailerAdapter mTrailerAdapter;
+    private Uri mUri;
+    private boolean isFavourite = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,13 +70,6 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
 
         // Butterknife binding
         ButterKnife.bind(this);
-
-        // Initialize the local variables for the Intent extras
-        String title = null;
-        String image = null;
-        String synopsis = null;
-        String rating = null;
-        String date = null;
         Movie movie;
 
         // If we have extras, check if the extras have the following keys and store them in the variables
@@ -72,34 +79,34 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
             if (extras.containsKey(MainActivity.DETAIL_MOVIE_KEY)) {
                 movie = extras.getParcelable(MainActivity.DETAIL_MOVIE_KEY);
                 mId = movie.getId();
-                title = movie.getTitle();
+                mTitle = movie.getTitle();
                 if (movie.getImagePath() != null){
-                    image = movie.getImageFullPath();
+                    mImagePath = movie.getImageFullPath();
                 } else {
-                    image = null;
+                    mImagePath = null;
                 }
-                synopsis = movie.getSynopsis();
-                rating = String.valueOf(movie.getRating());
-                date = movie.getReleaseDate();
+                mSynopsis = movie.getSynopsis();
+                mRating = movie.getRating();
+                mDate = movie.getReleaseDate();
             }
         }
 
         // Set the Movie title as the title of the Activity
-        setTitle(title);
+        setTitle(mTitle);
 
         // If there is no poster accessible, set the image placeholder as poster
-        if (image != null){
-            Picasso.with(this).load(image).into(mPosterImageView);
+        if (mImagePath != null){
+            Picasso.with(this).load(mImagePath).into(mPosterImageView);
         } else {
             mPosterImageView.setImageResource(R.drawable.poster_placeholder);
         }
 
         // Pass the data to the proper Views
-        mTitleTextView.setText(title);
-        mPosterImageView.setContentDescription(title);
-        mSynopsisTextView.setText(synopsis);
-        mRatingTextView.setText(rating);
-        mReleaseDateTextView.setText(date);
+        mTitleTextView.setText(mTitle);
+        mPosterImageView.setContentDescription(mTitle);
+        mSynopsisTextView.setText(mSynopsis);
+        mRatingTextView.setText(String.valueOf(mRating));
+        mReleaseDateTextView.setText(mDate);
 
         LinearLayoutManager reviewLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mReviewsRecyclerView.setLayoutManager(reviewLayoutManager);
@@ -127,6 +134,55 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
             showReviewEmptyText();
             showTrailerEmptyText();
         }
+
+        mFavouriteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (!isFavourite){
+
+                    insertMovie();
+
+                } else {
+
+                    deleteMovie();
+                }
+
+            }
+        });
+    }
+
+    private void insertMovie() {
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(FavouritesEntry.COLUMN_MOVIE_ID, mId);
+        contentValues.put(FavouritesEntry.COLUMN_TITLE, mTitle);
+        contentValues.put(FavouritesEntry.COLUMN_IMAGE_PATH, mImagePath);
+        contentValues.put(FavouritesEntry.COLUMN_SYNOPSIS, mSynopsis);
+        contentValues.put(FavouritesEntry.COLUMN_RATING, mRating);
+        contentValues.put(FavouritesEntry.COLUMN_RELEASE_DATE, mDate);
+
+        mUri = getContentResolver().insert(FavouritesEntry.CONTENT_URI, contentValues);
+
+        if (mUri != null) {
+            Toast.makeText(DetailActivity.this, String.format(getString(R.string.detail_add_favourite_text), mTitle), Toast.LENGTH_LONG).show();
+            mFavouriteIcon.setImageResource(R.drawable.ic_favorite);
+            isFavourite = true;
+        }
+
+    }
+
+    private void deleteMovie() {
+
+        Uri deleteUri = FavouritesEntry.CONTENT_URI.buildUpon().appendPath(String.valueOf(mId)).build();
+        int numbersOfDeleted = getContentResolver().delete(deleteUri, null, null);
+
+        if (numbersOfDeleted != 0) {
+            Toast.makeText(DetailActivity.this, String.format(getString(R.string.detail_remove_favourite_text), mTitle), Toast.LENGTH_LONG).show();
+            mFavouriteIcon.setImageResource(R.drawable.ic_favorite_border);
+            isFavourite = false;
+        }
+
     }
 
     /*

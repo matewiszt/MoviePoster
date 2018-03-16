@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <!-- Application name -->
     <string name="app_name">MoviePoster</string>
     <!-- Settings -->
@@ -22,6 +22,10 @@
     <string name="detail_synopsis_label">Synopsis</string>
     <string name="detail_reviews_label">Reviews</string>
     <string name="detail_trailers_label">Trailers</string>
+    <!-- Detail various -->
+    <string name="detail_favourite_content_desc">Mark as favourite</string>
+    <string name="detail_add_favourite_text"><xliff:g id="title">%1$s added to favourites</xliff:g></string>
+    <string name="detail_remove_favourite_text"><xliff:g id="title">%1$s removed from favourites</xliff:g></string>
     <!-- MainActivity -->
     <string name="empty_text">An error occurred. Please check your internet connection.</string>
     <string name="cd_bg">Movie</string>

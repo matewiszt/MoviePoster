@@ -86,6 +86,25 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/detail_default_date"/>
+
+                    <RelativeLayout
+                        android:id="@+id/detail_favourite_button"
+                        android:tint="@android:color/white"
+                        android:background="@drawable/like_icon_bg"
+                        android:layout_width="@dimen/detail_heart_bg_dimen"
+                        android:layout_height="@dimen/detail_heart_bg_dimen"
+                        android:layout_marginTop="@dimen/detail_half_spacing"
+                        android:layout_marginBottom="@dimen/detail_half_spacing">
+
+                        <ImageView
+                            android:contentDescription="@string/detail_favourite_content_desc"
+                            android:id="@+id/detail_favourite_icon"
+                            android:src="@drawable/ic_favorite_border"
+                            android:layout_centerInParent="true"
+                            android:layout_width="@dimen/detail_heart_dimen"
+                            android:layout_height="@dimen/detail_heart_dimen" />
+
+                    </RelativeLayout>
                 </LinearLayout>
 
             </LinearLayout>

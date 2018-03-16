@@ -4,5 +4,7 @@
     <dimen name="list_item_poster_max_width">185dp</dimen>
     <dimen name="detail_default_spacing">12dp</dimen>
     <dimen name="detail_half_spacing">6dp</dimen>
+    <dimen name="detail_heart_dimen">24dp</dimen>
+    <dimen name="detail_heart_bg_dimen">40dp</dimen>
     <dimen name="progress_bar_dimen">60dp</dimen>
 </resources>
