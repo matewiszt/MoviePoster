@@ -9,11 +9,16 @@ The project has been created in Android Studio IDE and you can build it by reque
 <code>MovieDbApiKey="YOUR_API_KEY"</code>
 
 ### Features
-- List of movies on launch
-- Detailed data about movies when clicking on a movie
-- Setting to choose which movies to list: most popular or top rated
+- Favourite button and favourite list of movies on launch (since 2.0)
+- Reviews and trailer links on detail screen (since 2.0)
+- List of movies on launch (since 1.0)
+- Detailed data about movies when clicking on a movie (since 1.0)
+- Setting to choose which movies to list: most popular, top rated (since 1.0) and favourites (since 2.0)
 
 ### Changelog
+- 2018-03-18: Add favourite button and Favourites DB
+- 2018-03-11: Add trailers and reviews
+- 2018-03-07: Retrofit and GSON integration
 - 2018-03-02: Add Parcelable implementation of Movie object
 - 2018-03-01: Butterknife integration
 - 2018-02-27: Release of version 1.0
