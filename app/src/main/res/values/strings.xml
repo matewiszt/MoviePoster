@@ -33,7 +33,13 @@
     <string name="favourite_empty_text">No favourites. Please switch to another sort order in the settings.</string>
     <string name="cd_bg">Movie</string>
     <string name="action_settings">Settings</string>
+    <string name="action_delete_favourites">Delete favourites</string>
     <string name="title_popular">Most popular movies</string>
     <string name="title_top_rated">Top rated movies</string>
     <string name="title_favourites">Favourite movies</string>
+    <string name="delete_dialog_message">Are you sure you want to lose all your favourites?</string>
+    <string name="delete_dialog_confirm">Yes</string>
+    <string name="delete_dialog_cancel">No</string>
+    <string name="delete_dialog_success">You successfully deleted all your favourites</string>
+    <string name="delete_dialog_error">We could not delete any favourites</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.example.android.movieposter;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -9,6 +10,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +20,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.movieposter.data.FavouritesContract.FavouritesEntry;
 import com.example.android.movieposter.movies.Movie;
@@ -145,13 +148,74 @@ public class MainActivity extends AppCompatActivity
 
         int id = item.getItemId();
 
-        // If the users clicks on the settings button, the SettingsActivity is launched
-        if (id == R.id.action_settings) {
-            Intent startSettingsActivity = new Intent(this, SettingsActivity.class);
-            startActivity(startSettingsActivity);
-            return true;
+        switch (id) {
+            // If the users clicks on the settings button, the SettingsActivity is launched
+            case R.id.action_settings:
+                Intent startSettingsActivity = new Intent(this, SettingsActivity.class);
+                startActivity(startSettingsActivity);
+                return true;
+            case R.id.action_delete:
+                showFavouritesDeleteDialog();
+                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        String sortOrder = preferences.getString(getString(R.string.sort_order_key), getString(R.string.sort_order_popular_value));
+
+        // If the sort order is not favourite, don't show the delete menu item
+        if (!sortOrder.equals(SORT_ORDER_FAVOURITE)) {
+            MenuItem item = menu.findItem(R.id.action_delete);
+            item.setVisible(false);
+        }
+
+        return true;
+    }
+
+    /*
+     * Manage the delete of favourites
+     */
+    private void showFavouritesDeleteDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.action_delete_favourites);
+        builder.setMessage(R.string.delete_dialog_message);
+
+        // If the user confirms, delete all the favourites from the DB
+        builder.setPositiveButton(R.string.delete_dialog_confirm, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                int numberOfRowsDeleted = getContentResolver().delete(FavouritesEntry.CONTENT_URI, null, null);
+
+                if (numberOfRowsDeleted != 0) {
+
+                    Toast.makeText(MainActivity.this, getString(R.string.delete_dialog_success), Toast.LENGTH_LONG).show();
+                    loadMoviesFromDb();
+
+                } else {
+
+                    Toast.makeText(MainActivity.this, getString(R.string.delete_dialog_error), Toast.LENGTH_LONG).show();
+
+                }
+            }
+        });
+
+        // Otherwise, just dismiss the dialog
+        builder.setNegativeButton(R.string.delete_dialog_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                dialogInterface.dismiss();
+
+            }
+        });
+
+        builder.create().show();
+
     }
 
     /*
@@ -308,8 +372,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     /*
-     * Hide the RecyclerView and the ProgressBar show the empty text
-     */
+         * Hide the RecyclerView and the ProgressBar show the empty text
+         */
     private void showEmptyText() {
         mRecyclerView.setVisibility(View.INVISIBLE);
         mProgressBar.setVisibility(View.INVISIBLE);
