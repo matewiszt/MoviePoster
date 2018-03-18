@@ -3,6 +3,7 @@ package com.example.android.movieposter;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -54,6 +55,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
     private int mId;
     private String mTitle;
     private String mImagePath;
+    private String mFullImagePath;
     private String mSynopsis;
     private double mRating;
     private String mDate;
@@ -80,10 +82,11 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
                 movie = extras.getParcelable(MainActivity.DETAIL_MOVIE_KEY);
                 mId = movie.getId();
                 mTitle = movie.getTitle();
-                if (movie.getImagePath() != null){
-                    mImagePath = movie.getImageFullPath();
+                mImagePath = movie.getImagePath();
+                if (mImagePath != null){
+                    mFullImagePath = movie.getImageFullPath();
                 } else {
-                    mImagePath = null;
+                    mFullImagePath = null;
                 }
                 mSynopsis = movie.getSynopsis();
                 mRating = movie.getRating();
@@ -91,12 +94,14 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
             }
         }
 
+        setFavourite();
+
         // Set the Movie title as the title of the Activity
         setTitle(mTitle);
 
         // If there is no poster accessible, set the image placeholder as poster
-        if (mImagePath != null){
-            Picasso.with(this).load(mImagePath).into(mPosterImageView);
+        if (mFullImagePath != null){
+            Picasso.with(this).load(mFullImagePath).into(mPosterImageView);
         } else {
             mPosterImageView.setImageResource(R.drawable.poster_placeholder);
         }
@@ -135,25 +140,57 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
             showTrailerEmptyText();
         }
 
+        // Set the click listener on the favourite button
         mFavouriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                if (!isFavourite){
+                if (isFavourite){
 
-                    insertMovie();
+                    deleteMovie();
 
                 } else {
 
-                    deleteMovie();
+                    insertMovie();
                 }
 
             }
         });
     }
 
+    /*
+     * Set the isFavourite flag to true if the movie is already in the favourites DB
+     */
+    private void setFavourite() {
+
+        // Query the DB with URI built from the movieId
+        Uri queryUri = FavouritesEntry.CONTENT_URI.buildUpon().appendPath(String.valueOf(mId)).build();
+        Cursor cursor = getContentResolver().query(
+                queryUri,
+                null,
+                null,
+                null,
+                null);
+
+        if (cursor == null) {
+            return;
+        }
+
+        // If the movie exists in the DB, initialize it as favourite
+        if (cursor.moveToFirst()) {
+            mFavouriteIcon.setImageResource(R.drawable.ic_favorite);
+            isFavourite = true;
+            cursor.close();
+        }
+
+    }
+
+    /*
+     * Insert the movie into Favourites DB
+     */
     private void insertMovie() {
 
+        // Put the movie data to a ContentValues Object
         ContentValues contentValues = new ContentValues();
         contentValues.put(FavouritesEntry.COLUMN_MOVIE_ID, mId);
         contentValues.put(FavouritesEntry.COLUMN_TITLE, mTitle);
@@ -162,9 +199,11 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         contentValues.put(FavouritesEntry.COLUMN_RATING, mRating);
         contentValues.put(FavouritesEntry.COLUMN_RELEASE_DATE, mDate);
 
+        // Insert the ContentValues into DB
         mUri = getContentResolver().insert(FavouritesEntry.CONTENT_URI, contentValues);
 
         if (mUri != null) {
+            // If the insertion is successful, show a toast, change the icon and change the flag
             Toast.makeText(DetailActivity.this, String.format(getString(R.string.detail_add_favourite_text), mTitle), Toast.LENGTH_LONG).show();
             mFavouriteIcon.setImageResource(R.drawable.ic_favorite);
             isFavourite = true;
@@ -172,12 +211,17 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
 
     }
 
+    /*
+     * Delete the movie from Favourites DB
+     */
     private void deleteMovie() {
 
+        // Build the URI from the movieID and delete it from the DB
         Uri deleteUri = FavouritesEntry.CONTENT_URI.buildUpon().appendPath(String.valueOf(mId)).build();
         int numbersOfDeleted = getContentResolver().delete(deleteUri, null, null);
 
         if (numbersOfDeleted != 0) {
+            // If the delete is successful, show a toast, change the icon and change the flag
             Toast.makeText(DetailActivity.this, String.format(getString(R.string.detail_remove_favourite_text), mTitle), Toast.LENGTH_LONG).show();
             mFavouriteIcon.setImageResource(R.drawable.ic_favorite_border);
             isFavourite = false;
@@ -186,8 +230,8 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
     }
 
     /*
-        * Load the reviews of the Movie
-        */
+     * Load the reviews of the Movie
+     */
     private void loadReviews() {
 
         // Make a call with the endpoint
