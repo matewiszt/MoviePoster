@@ -3,6 +3,7 @@ package com.example.android.movieposter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -18,11 +19,13 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.android.movieposter.data.FavouritesContract.FavouritesEntry;
 import com.example.android.movieposter.movies.Movie;
 import com.example.android.movieposter.movies.MovieAdapter;
 import com.example.android.movieposter.movies.Movies;
 import com.example.android.movieposter.network.MovieService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -38,8 +41,12 @@ public class MainActivity extends AppCompatActivity
     // Log tag
     private String LOG_TAG = getClass().getName();
 
-    // Intent extra keys - public because we use the same ones in the DetailActivity to return them
+    // Key of the Movie Parcelable for the detail intent
     public static final String DETAIL_MOVIE_KEY = "movie";
+
+    public static final String SORT_ORDER_FAVOURITE = "favourite";
+    public static final String SORT_ORDER_POPULAR = "popular";
+    public static final String SORT_ORDER_TOP_RATED = "top_rated";
 
     private boolean mSettingsUpdated = false;
 
@@ -148,7 +155,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /*
-     * Load the movies via MovieService class
+     * Load movies
      */
     private void loadMovies() {
 
@@ -157,7 +164,94 @@ public class MainActivity extends AppCompatActivity
 
         // Get the sort order from Preferences
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String endpoint = preferences.getString(getString(R.string.sort_order_key), getString(R.string.sort_order_popular_value));
+        String sortOrder = preferences.getString(getString(R.string.sort_order_key), getString(R.string.sort_order_popular_value));
+
+        //If the sort order is favourite, load the movies from the DB
+        if (sortOrder.equals(SORT_ORDER_FAVOURITE)) {
+
+            loadMoviesFromDb();
+
+        } else {
+
+            // Otherwise load movies from the API with the corresponding endpoint
+            loadMoviesFromApi(sortOrder);
+
+        }
+
+    }
+
+    /*
+     * Load favourite movies from the DB
+     */
+    private void loadMoviesFromDb() {
+
+        mAdapter.setMovieData(null);
+
+        // All the columns
+        String[] projection = {
+                FavouritesEntry.COLUMN_TITLE,
+                FavouritesEntry.COLUMN_MOVIE_ID,
+                FavouritesEntry.COLUMN_IMAGE_PATH,
+                FavouritesEntry.COLUMN_SYNOPSIS,
+                FavouritesEntry.COLUMN_RATING,
+                FavouritesEntry.COLUMN_RELEASE_DATE
+        };
+
+        // Query the DB
+        Cursor cursor = getContentResolver().query(
+                FavouritesEntry.CONTENT_URI,
+                projection,
+                null,
+                null,
+                null);
+
+        if (cursor == null) {
+            return;
+        }
+
+        List<Movie> movies = new ArrayList<>();
+
+        // Loop through all the rows in the Cursor and convert them into Movie objects and add them to a list of movies
+        for (int i = 0; i < cursor.getCount(); i++){
+
+            cursor.moveToPosition(i);
+
+            String title = cursor.getString(cursor.getColumnIndex(FavouritesEntry.COLUMN_TITLE));
+            int movieId = cursor.getInt(cursor.getColumnIndex(FavouritesEntry.COLUMN_MOVIE_ID));
+            String imagePath = cursor.getString(cursor.getColumnIndex(FavouritesEntry.COLUMN_IMAGE_PATH));
+            String synopsis = cursor.getString(cursor.getColumnIndex(FavouritesEntry.COLUMN_SYNOPSIS));
+            double rating = cursor.getDouble(cursor.getColumnIndex(FavouritesEntry.COLUMN_RATING));
+            String date = cursor.getString(cursor.getColumnIndex(FavouritesEntry.COLUMN_RELEASE_DATE));
+
+            Movie movie = new Movie(movieId, title, imagePath, synopsis, rating, date);
+
+            movies.add(movie);
+
+        }
+
+        // Close the cursor replace the title and set the movie data
+        cursor.close();
+        mRecyclerTitle.setText(getString(R.string.title_favourites));
+
+        if (movies.size() != 0) {
+
+            mAdapter.setMovieData(movies);
+            // Make the movie list visible
+            showRecyclerContainer();
+
+        } else {
+            mEmptyView.setText(R.string.favourite_empty_text);
+            showEmptyText();
+        }
+
+    }
+
+
+    /*
+     * Load the movies from the API via MovieService class
+     * @param String endpoint: the API endpoint to query
+     */
+    private void loadMoviesFromApi(String endpoint) {
 
         // Make a call with the endpoint
         Call<Movies> call = MovieService.getMovies(endpoint);
@@ -186,10 +280,13 @@ public class MainActivity extends AppCompatActivity
                     String endpoint = preferences.getString(getString(R.string.sort_order_key), getString(R.string.sort_order_popular_value));
                     String title = "";
                     switch (endpoint){
-                        case "top_rated":
+                        case SORT_ORDER_TOP_RATED:
                             title = getString(R.string.title_top_rated);
                             break;
-                        case "popular":
+                        case SORT_ORDER_POPULAR:
+                            title = getString(R.string.title_popular);
+                            break;
+                        default:
                             title = getString(R.string.title_popular);
                     }
                     mRecyclerTitle.setText(title);
@@ -214,7 +311,7 @@ public class MainActivity extends AppCompatActivity
      * Hide the RecyclerView and the ProgressBar show the empty text
      */
     private void showEmptyText() {
-        mRecyclerContainer.setVisibility(View.INVISIBLE);
+        mRecyclerView.setVisibility(View.INVISIBLE);
         mProgressBar.setVisibility(View.INVISIBLE);
         mEmptyView.setVisibility(View.VISIBLE);
     }
@@ -225,7 +322,7 @@ public class MainActivity extends AppCompatActivity
     private void showRecyclerContainer() {
         mEmptyView.setVisibility(View.INVISIBLE);
         mProgressBar.setVisibility(View.INVISIBLE);
-        mRecyclerContainer.setVisibility(View.VISIBLE);
+        mRecyclerView.setVisibility(View.VISIBLE);
     }
 
     /*
@@ -233,7 +330,7 @@ public class MainActivity extends AppCompatActivity
      */
     private void showProgressBar() {
         mEmptyView.setVisibility(View.INVISIBLE);
-        mRecyclerContainer.setVisibility(View.INVISIBLE);
+        mRecyclerView.setVisibility(View.INVISIBLE);
         mProgressBar.setVisibility(View.VISIBLE);
     }
 }
