@@ -10,6 +10,7 @@ public class FavouritesDbHelper extends SQLiteOpenHelper {
     // Basic data for the DB
     private static final String DATABASE_NAME = "favourites.db";
     private static final int DATABASE_VERSION = 1;
+    private static final String MODIFY_TABLE_COMMAND = "";
 
     // Public constructor for the DB helper
     public FavouritesDbHelper(Context context) {
@@ -33,8 +34,12 @@ public class FavouritesDbHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + FavouritesEntry.TABLE_NAME);
-        onCreate(sqLiteDatabase);
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
+
+        if (oldVersion < DATABASE_VERSION) {
+
+            sqLiteDatabase.execSQL(MODIFY_TABLE_COMMAND);
+
+        }
     }
 }

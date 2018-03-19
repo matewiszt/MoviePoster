@@ -80,7 +80,7 @@ public class FavouritesProvider extends ContentProvider {
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues contentValues) {
 
         // If the contentValues is empty, return
-        if (contentValues.size() == 0){
+        if (contentValues == null || contentValues.size() == 0){
 
             return null;
 
