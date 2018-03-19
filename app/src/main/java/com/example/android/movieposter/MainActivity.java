@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -51,6 +52,8 @@ public class MainActivity extends AppCompatActivity
     public static final String SORT_ORDER_POPULAR = "popular";
     public static final String SORT_ORDER_TOP_RATED = "top_rated";
 
+    public static final String LIST_STATE_KEY = "list_state";
+
     private boolean mSettingsUpdated = false;
 
     // Butterknife inits
@@ -61,6 +64,7 @@ public class MainActivity extends AppCompatActivity
     @BindView(R.id.progress_bar) ProgressBar mProgressBar;
 
     private MovieAdapter mAdapter;
+    private Parcelable mListState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +73,11 @@ public class MainActivity extends AppCompatActivity
 
         // Butterknife binding
         ButterKnife.bind(this);
+
+        // Get back the list_state Parcelable
+        if (savedInstanceState != null) {
+            mListState = savedInstanceState.getParcelable(LIST_STATE_KEY);
+        }
 
         // Create a new GridLayoutManager and set it to the RecyclerView
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
@@ -176,9 +185,15 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable(LIST_STATE_KEY, mRecyclerView.getLayoutManager().onSaveInstanceState());
+        super.onSaveInstanceState(outState);
+    }
+
     /*
-     * Manage the delete of favourites
-     */
+         * Manage the delete of favourites
+         */
     private void showFavouritesDeleteDialog() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -302,6 +317,7 @@ public class MainActivity extends AppCompatActivity
             mAdapter.setMovieData(movies);
             // Make the movie list visible
             showRecyclerContainer();
+            mRecyclerView.getLayoutManager().onRestoreInstanceState(mListState);
 
         } else {
             mEmptyView.setText(R.string.favourite_empty_text);
@@ -357,6 +373,7 @@ public class MainActivity extends AppCompatActivity
 
                     // Make the movie list visible
                     showRecyclerContainer();
+                    mRecyclerView.getLayoutManager().onRestoreInstanceState(mListState);
                 } else {
                     showEmptyText();
                 }
